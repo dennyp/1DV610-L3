@@ -46,7 +46,7 @@ class User extends DatabaseHandler
 
     private function findOneUser(string $username)
     {
-        $conn = $this->connect();
+        $conn = $this->getConnection();
         $query = "SELECT username, password FROM user WHERE username=?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param('s', $username);
