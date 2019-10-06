@@ -2,13 +2,36 @@
 
 namespace View;
 
-class DateTimeView {
+class DateTimeView
+{
 
+    private $date;
 
-	public function show() {
+    public function __construct(\Model\Date $date)
+    {
+        $this->date = $date;
+    }
 
-		$timeString = time();
+    public function show()
+    {
+        return $this->generateTimeHTML();
+    }
 
-		return '<p>' . date('l', $timeString) . ', the ' . date('d', $timeString) . 'th of ' . date('F Y', $timeString) . ', The time is ' . date('H:i:s', $timeString) . '</p>';
-	}
+    private function generateTimeHTML()
+    {
+        return '<p>' . $this->date->getDayOfWeek() . ', the ' . $this->date->getDayOfMonth() . $this->getDayOfMonthEnding() . 'of ' . $this->date->getMonth() . ' ' . $this->date->getYear() . ', The time is ' . $this->date->getTimeOfDay() . '</p>';
+    }
+
+    private function getDayOfMonthEnding()
+    {
+        if ($this->date->getDayOfMonth() == '1') {
+            return 'st ';
+        } else if ($this->date->getDayOfMonth() == '2') {
+            return 'nd ';
+        } else if ($this->date->getDayOfMonth() == '3') {
+            return 'rd ';
+        }
+
+        return 'th ';
+    }
 }
