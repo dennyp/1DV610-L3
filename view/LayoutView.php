@@ -3,21 +3,26 @@
 namespace View;
 
 require_once 'model/User.php';
+require_once 'model/DateTimeGenerator.php';
 
 class LayoutView
 {
+
     private $user;
     private $view;
+    private $date;
     private $dateTimeView;
 
     public function __construct($view)
     {
-        $this->user = new \model\User();
         $this->view = $view;
-        $this->dateTimeView = new DateTimeView();
+        $this->user = new \Model\User();
+
+        $this->dateTime = new \Model\DateTimeGenerator();
+        $this->dateTimeView = new DateTimeView($this->dateTime->getTime());
     }
 
-    public function render()
+    public function render($message = '')
     {
         echo '<!DOCTYPE html>
       <html>
@@ -30,7 +35,7 @@ class LayoutView
           ' . $this->isLoggedIn() . '
 
           <div class="container">
-              ' . $this->view->render('') . '
+              ' . $this->view->render($message) . '
 
               ' . $this->dateTimeView->show() . '
           </div>
