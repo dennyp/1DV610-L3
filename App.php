@@ -23,10 +23,11 @@ class App
         $this->layoutView = new \View\LayoutView($this->loginView);
 
         $this->layoutController = new \Controller\LayoutController($this->layoutView);
+        $this->loginController = new \Controller\LoginController($this->loginView);
     }
 
     public function run()
     {
-        $this->layoutController->renderPage();
+        $this->layoutController->render();
     }
 }
