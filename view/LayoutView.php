@@ -2,21 +2,22 @@
 
 namespace View;
 
+require_once 'model/Cookie.php';
 require_once 'model/User.php';
 require_once 'model/DateTimeGenerator.php';
 
 class LayoutView
 {
 
-    private $user;
-    private $view;
+    private $loginView;
     private $date;
     private $dateTimeView;
+    private $cookie;
+    private static $cookieName = 'PHPSESSID';
 
-    public function __construct($view)
+    public function __construct(\View\LoginView $view)
     {
-        $this->view = $view;
-        $this->user = new \Model\User();
+        $this->loginView = $view;
 
         $this->dateTime = new \Model\DateTimeGenerator();
         $this->dateTimeView = new DateTimeView($this->dateTime->getTime());
@@ -32,10 +33,10 @@ class LayoutView
         </head>
         <body>
           <h1>Assignment 2</h1>
-          ' . $this->isLoggedIn() . '
+          ' . $this->isLoggedInHTML() . '
 
           <div class="container">
-              ' . $this->view->render($message) . '
+              ' . $this->getHTMLBasedOnLoggedIn($message) . '
 
               ' . $this->dateTimeView->show() . '
           </div>
@@ -44,12 +45,50 @@ class LayoutView
     ';
     }
 
+    private function isLoggedInHTML()
+    {
+        $html = '';
+        if ($this->isLoggedIn()) {
+            $html = '<h2>Logged in</h2>';
+        } else {
+            $html = '<h2>Not logged in</h2>';
+        }
+        return $html;
+    }
+
+    private function getHTMLBasedOnLoggedIn($message)
+    {
+        if ($this->isLoggedIn()) {
+            return $this->loginView->renderLoggedIn($message);
+        } else {
+            return $this->loginView->renderLogin($message);
+        }
+    }
+
     private function isLoggedIn()
     {
-        if ($this->user->isLoggedIn()) {
-            return '<h2>Logged in</h2>';
-        } else {
-            return '<h2>Not logged in</h2>';
-        }
+        return $_COOKIE[self::$cookieName] ?? null;
+    }
+
+    public function getUsername()
+    {
+        return $this->loginView->getUsername();
+    }
+
+    public function getPassword()
+    {
+        return $this->loginView->getPassword();
+    }
+
+    public function setLoggedIn()
+    {
+        $this->cookie = new \Model\Cookie(self::$cookieName, 'validated', time() + (60 * 60 * 24 * 30));
+        $this->refreshPage();
+    }
+
+    private function refreshPage()
+    {
+        header("Location: ./");
+        exit();
     }
 }
