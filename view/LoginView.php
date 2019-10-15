@@ -5,7 +5,6 @@ namespace View;
 class LoginView
 {
 
-    private $view;
     private static $login = 'LoginView::Login';
     private static $logout = 'LoginView::Logout';
     private static $name = 'LoginView::UserName';
@@ -15,25 +14,28 @@ class LoginView
 
     public function __construct()
     {
-        $this->user = new \model\User();
-
     }
 
-    public function render($message)
+    public function renderLogin($message)
     {
         return $this->generateLoginFormHTML($message);
+    }
+
+    public function renderLoggedIn($message)
+    {
+        return $this->generateLogoutButtonHTML($message);
     }
 
     private function generateLoginFormHTML(string $message)
     {
         return '
-			<form method="post" >
+			<form method="post">
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
 					<p id="' . self::$messageId . '">' . $message . '</p>
 
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getPostParameter(self::$name) . '" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->getUsername() . '" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
@@ -57,8 +59,18 @@ class LoginView
 		';
     }
 
-    public function getPostParameter($param)
+    public function getUsername()
     {
-        return $_POST[$param] ?? null;
+        return $_POST[self::$name] ?? null;
+    }
+
+    public function getPassword()
+    {
+        return $_POST[self::$password] ?? null;
+    }
+
+    public function getKeepMeLoggedIn()
+    {
+        return $_POST[self::$keepLoggedIn] ?? null;
     }
 }
