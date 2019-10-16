@@ -6,16 +6,43 @@ require_once 'DatabaseHandler.php';
 
 class User extends DatabaseHandler
 {
-    public function isLoggedIn()
+
+    private $id;
+    private $name;
+    private $authenticated;
+    private $conn;
+
+    public function __construct($user)
     {
-        // TODO : Check if user is logged in
-        return false;
+        parent::__construct();
+        $this->id = null;
+        $this->name = $user;
+        $this->authenticated = false;
     }
 
-    public function isUsernameExisting($username)
+    public function addUser(string $name, string $password) : int
     {
-        $stmt = $this->findUser($username);
-        return \mysqli_stmt_num_rows($stmt) === 1;
+        $name = $this->removeWhitespace($name);
+        $password = $this->removeWhitespace($password);
+
+        $query = 'INSERT INTO user (Username, Password) VALUES (?, ?)';
+
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+        if ($statement = $this->getConnection()->prepare($query)) {
+            $statement->bind_param('ss', $name, $password);
+            $statement->execute();
+            $userId = $statement->insert_id;
+            $statement->close();
+        }
+        $this->getConnection()->close();
+
+        return $userId;
+    }
+
+    private function removeWhitespace(string $str): string
+    {
+        return trim($str);
     }
 
     public function validateUser($username, $password)
