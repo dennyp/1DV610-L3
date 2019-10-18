@@ -9,18 +9,30 @@ class User extends DatabaseHandler
 
     private $id;
     private $name;
+    private $password;
     private $authenticated;
     private $conn;
 
-    public function __construct($user)
+    public function __construct($username, $password)
     {
         parent::__construct();
         $this->id = null;
-        $this->name = $user;
+        $this->name = $username;
+        $this->password = $password;
         $this->authenticated = false;
     }
 
-    public function addUser(string $name, string $password) : int
+    public function getUsername()
+    {
+        return $this->name;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function addUser(string $name, string $password): int
     {
         $name = $this->removeWhitespace($name);
         $password = $this->removeWhitespace($password);
@@ -30,7 +42,7 @@ class User extends DatabaseHandler
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         if ($statement = $this->getConnection()->prepare($query)) {
-            $statement->bind_param('ss', $name, $password);
+            $statement->bind_param('ss', $name, $passwordHash);
             $statement->execute();
             $userId = $statement->insert_id;
             $statement->close();
@@ -45,19 +57,9 @@ class User extends DatabaseHandler
         return trim($str);
     }
 
-    public function validateUser($username, $password)
+    public function findUser($username)
     {
-        $user = $this->findOneUser($username);
-
-        $dbUsername = $user['username'] ?? null;
-        $dbPassword = $user['password'] ?? null;
-
-        return $password === $dbPassword;
-    }
-
-    private function findUser($username)
-    {
-        $query = "SELECT * FROM user WHERE username=?";
+        $query = "SELECT UserId FROM user WHERE username=?";
         $stmt = \mysqli_stmt_init($this->getConnection());
 
         if (!\mysqli_stmt_prepare($stmt, $query)) {
@@ -71,7 +73,21 @@ class User extends DatabaseHandler
         return $stmt;
     }
 
-    private function findOneUser(string $username)
+    public function findUserId($username)
+    {
+        $query = "SELECT UserId FROM user WHERE username=?";
+        if ($statement = $this->getConnection()->prepare($query)) {
+            $statement->bind_param('s', $username);
+            $statement->execute();
+            $statement->bind_result($userId);
+            $statement->fetch();
+            $statement->close();
+        }
+        $this->getConnection()->close();
+        return $userId;
+    }
+
+    public function findOneUser(string $username)
     {
         $conn = $this->getConnection();
         $query = "SELECT username, password FROM user WHERE username=?";

@@ -2,18 +2,23 @@
 
 namespace Controller;
 
+require_once 'model/Auth.php';
+require_once 'model/Session.php';
+
 class LayoutController
 {
 
     private $view;
     private $user;
     private $message;
+    private $auth;
+    private $session;
 
     public function __construct(\View\LayoutView $view)
     {
         $this->view = $view;
-        $this->user = new \Model\User();
         $this->message = '';
+        $this->auth = new \Model\Auth();
     }
 
     private function getMessage()
@@ -38,14 +43,20 @@ class LayoutController
         } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
             $this->setMessage('Password is missing');
         } else if ($this->isUserNameNotNull() && $this->isPasswordNotNull()) {
-            $validated = $this->user->validateUser
-                ($this->view->getUsername(), $this->view->getPassword());
-
-            $this->setValidatedMessage($validated);
+            $user = new \Model\User($this->view->getUsername(), $this->view->getPassword());
+            $validated = $this->auth->validateUser($user);
+            $this->setValidationMessage($validated);
 
             if ($validated) {
-                $this->view->setLoggedIn();
+                $userId = $user->findUserId($this->view->getUsername());
+
+                session_start();
+                $this->session = new \Model\Session();
+                $this->session->setSession(session_id(), $userId);
             }
+        } else if ($this->view->isLoggingOut()) {
+            $this->setMessage('Bye bye!');
+            $this->view->deleteLoggedInCookie();
         }
 
         $this->view->render($this->getMessage());
@@ -71,7 +82,18 @@ class LayoutController
         return empty($this->view->getPassword());
     }
 
-    private function setValidatedMessage($validated)
+    private function validateUserAndSetSession()
+    {
+        $validated = $this->validateUser();
+
+        $this->setValidationMessage($validated);
+
+        if ($validated) {
+            $this->view->setLoggedInCookie();
+        }
+    }
+
+    private function setValidationMessage($validated)
     {
         if (!$validated) {
             $this->setMessage('Wrong name or password');
