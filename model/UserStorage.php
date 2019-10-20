@@ -7,29 +7,35 @@ require_once 'User.php';
 
 class UserStorage extends DatabaseHandler
 {
-    public function addUser(string $name, string $password): int
+    public function addUser(string $name, string $password)
     {
         $name = $this->removeWhitespace($name);
         $password = $this->removeWhitespace($password);
 
-        $query = 'INSERT INTO user (Username, Password) VALUES (?, ?)';
+        if ($this->isNotNullOrEmpty($name) &&
+            $this->isNotNullOrEmpty($password)) {
+            $query = 'INSERT INTO user (Username, Password) VALUES (?, ?)';
 
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-        if ($statement = $this->getConnection()->prepare($query)) {
-            $statement->bind_param('ss', $name, $passwordHash);
-            $statement->execute();
-            $userId = $statement->insert_id;
-            $statement->close();
+            if ($statement = $this->getConnection()->prepare($query)) {
+                $statement->bind_param('ss', $name, $passwordHash);
+                $statement->execute();
+                $userId = $statement->insert_id;
+                $statement->close();
+            }
+            $this->getConnection()->close();
         }
-        $this->getConnection()->close();
-
-        return $userId;
     }
 
     private function removeWhitespace(string $str): string
     {
         return trim($str);
+    }
+
+    private function isNotNullOrEmpty($param)
+    {
+        return !is_null($param) && $param !== '';
     }
 
     public function findUserId(string $username)
