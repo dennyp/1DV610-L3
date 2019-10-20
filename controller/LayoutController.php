@@ -4,6 +4,7 @@ namespace Controller;
 
 require_once 'model/Auth.php';
 require_once 'model/Session.php';
+require_once 'model/UserStorage.php';
 
 class LayoutController
 {
@@ -46,11 +47,12 @@ class LayoutController
                 $this->setMessage('Password is missing');
             } else if ($this->isUserNameNotNull() && $this->isPasswordNotNull()) {
                 $user = new \Model\User($this->view->getUsername(), $this->view->getPassword());
+                $userStorage = new \Model\UserStorage();
                 $validated = $this->auth->validateUser($user);
                 $this->setValidationMessage($validated);
 
                 if ($validated) {
-                    $userId = $user->findUserId($this->view->getUsername());
+                    $userId = $userStorage->findUserId($this->view->getUsername());
 
                     $this->session->setSession($userId);
                 }

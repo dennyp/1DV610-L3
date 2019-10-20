@@ -3,18 +3,14 @@
 namespace Model;
 
 require_once 'DatabaseHandler.php';
+require_once 'model/UserStorage.php';
 
-class Auth extends DatabaseHandler
+class Auth
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function validateUser(\Model\User $user): bool
     {
-        $dbUser = $user->findOneUser($user->getUsername());
+        $userStorage = new \Model\UserStorage();
+        $dbUser = $userStorage->findOneUser($user->getUsername());
 
         $dbUsername = $dbUser['username'] ?? null;
         $dbPassword = $dbUser['password'] ?? null;
