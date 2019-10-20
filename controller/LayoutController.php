@@ -23,6 +23,7 @@ class LayoutController
         $this->message = '';
         $this->auth = new \Model\Auth();
         $this->userStorage = new \Model\UserStorage();
+        $this->session = new \Model\Session();
     }
 
     private function getMessage()
@@ -46,7 +47,6 @@ class LayoutController
             $this->view->render();
             $this->saveUserOnPost();
         } else {
-            $this->session = new \Model\Session();
             if ($this->isNoValidSession()) {
                 $this->checkInputFields();
             } else if ($this->view->isLoggingOut()) {
@@ -68,7 +68,7 @@ class LayoutController
             $this->setMessage('Username is missing');
         } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
             $this->setMessage('Password is missing');
-        } else if ($this->isUserNameNotNull() && $this->isPasswordNotNull()) {
+        } else if ($this->isUsernameNotNull() && $this->isPasswordNotNull()) {
             $validated = $this->validateUser();
             $this->setSessionIfValidated($validated);
         }
@@ -85,7 +85,7 @@ class LayoutController
         return \Model\Util::isNotNull($user->getUsername()) && \Model\Util::isNotNull($user->getPassword());
     }
 
-    private function isUserNameNotNull(): bool
+    private function isUsernameNotNull(): bool
     {
         return !is_null($this->view->getUsername());
     }
@@ -140,7 +140,7 @@ class LayoutController
             if ($this->isUserNotNull($user)) {
                 $this->userStorage->addUser($user);
                 $this->setMessage('Registered new user.');
-                $this->view->goToMainPage();
+                // TODO: Should redirect to index $this->view->goToMainPage();
             }
         }
     }
