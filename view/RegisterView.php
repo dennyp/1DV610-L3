@@ -26,7 +26,9 @@ class RegisterView
         $passwordRepeat = $this->getParameter(self::$passwordRepeat);
 
         try {
-            $this->userRuleException->checkUserRules($name, $password, $passwordRepeat);
+            if ($this->getRegisterPostback()) {
+                $this->userRuleException->checkUserRules($name, $password, $passwordRepeat);
+            }
         } catch (\Exception $ex) {
             $message = $ex->getMessage();
         }

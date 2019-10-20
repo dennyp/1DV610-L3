@@ -27,9 +27,9 @@ class UserRule
         return strlen($password) < $this->getMinPasswordLength();
     }
 
-    public function isNotNullOrWhitespace(string $name)
+    public function isNotNull(string $name)
     {
-        return !is_null($name) && $name !== '';
+        return !is_null($name);
     }
 
     public function hasBadCharacters($rawString)

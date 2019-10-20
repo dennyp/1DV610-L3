@@ -31,7 +31,7 @@ class UserRuleException extends \Exception
 
     private function checkName(string $name)
     {
-      if($this->userRule->isNotNullOrWhitespace($name)){
+      if($this->userRule->isNotNull($name)){
         if ($this->userRule->isMinimumUsernameLength($name)) {
             return 'Username has too few characters, at least ' .
             $this->userRule->getMinUsernameLength() . ' characters. ';
@@ -43,7 +43,7 @@ class UserRuleException extends \Exception
 
     private function checkPassword($password)
     {
-        if ($this->userRule->isNotNullOrWhitespace($password) &&
+        if ($this->userRule->isNotNull($password) &&
             $this->userRule->isMinimumPasswordLength($password)) {
             return 'Password has too few characters, at least ' .
             $this->userRule->getMinPasswordLength() . ' characters. ';
