@@ -12,7 +12,8 @@ class UserStorage extends DatabaseHandler
 
     public function __construct()
     {
-        $this->userrule = new \Model\UserRule();
+        parent::__construct();
+        $this->userRule = new \Model\UserRule();
     }
 
     public function addUser(string $name, string $password)

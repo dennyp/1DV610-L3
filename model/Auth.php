@@ -2,7 +2,6 @@
 
 namespace Model;
 
-require_once 'DatabaseHandler.php';
 require_once 'UserStorage.php';
 
 class Auth
