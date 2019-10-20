@@ -29,7 +29,6 @@ class RegisterView
             $this->userRuleException->checkUserRules($name, $password, $passwordRepeat);
         } catch (\Exception $ex) {
             $message = $ex->getMessage();
-            echo $message;
         }
 
         return $this->generateRegisterFormHTML($message);
