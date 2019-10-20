@@ -14,12 +14,14 @@ class LayoutController
     private $message;
     private $auth;
     private $session;
+    private $userStorage;
 
     public function __construct(\View\LayoutView $view)
     {
         $this->view = $view;
         $this->message = '';
         $this->auth = new \Model\Auth();
+        $this->userStorage = new \Model\UserStorage();
     }
 
     private function getMessage()
@@ -41,7 +43,13 @@ class LayoutController
     {
         if ($this->view->getRegister()) {
             $this->view->render();
-        } else {
+            if ($this->view->isRegisteringUser()) {
+                $username = $this->view->getUsernamePostback();
+                $password = $this->view->getPasswordPostback();
+                if (!is_null($username) && !is_null($password)) {
+                    $this->userStorage->addUser($username, $password);
+                }
+            }} else {
             $this->session = new \Model\Session();
 
             if (!$this->session->checkValidSession()) {
@@ -50,7 +58,8 @@ class LayoutController
                 } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
                     $this->setMessage('Password is missing');
                 } else if ($this->isUserNameNotNull() && $this->isPasswordNotNull()) {
-                    $user = new \Model\User($this->view->getUsername(), $this->view->getPassword());
+                    $user = new \Model\User($this->view->getUsername(),
+                        $this->view->getPassword());
                     $userStorage = new \Model\UserStorage();
                     $validated = $this->auth->validateUser($user);
                     $this->setValidationMessage($validated);

@@ -11,7 +11,6 @@ class Auth
     {
         $userStorage = new \Model\UserStorage();
         $dbUser = $userStorage->findOneUser($user->getUsername());
-        var_dump($dbUser);
         return password_verify($user->getPassword(), $dbUser->getPassword());
     }
 }

@@ -62,6 +62,26 @@ class RegisterView
         return $_POST[$param] ?? '';
     }
 
+    public function getRegisterButtonName()
+    {
+        return self::$register;
+    }
+
+    public function getRegisterPostback()
+    {
+        return isset($_POST[self::$register]);
+    }
+
+    public function getRegisterUsername()
+    {
+        return $this->getParameter(self::$name);
+    }
+
+    public function getRegisterPassword()
+    {
+        return $this->getParameter(self::$password);
+    }
+
     private function removeBadCharacters($rawString)
     {
         return filter_var($rawString, FILTER_SANITIZE_STRING);

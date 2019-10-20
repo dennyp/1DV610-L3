@@ -15,6 +15,7 @@ class LayoutView
     private $cookie;
     private static $cookieName = 'PHPSESSID';
     private $session;
+    private static $registerName = 'register';
 
     public function __construct(\View\LoginView $view)
     {
@@ -90,7 +91,7 @@ class LayoutView
 
     public function getRegister()
     {
-        return isset($_GET['register']);
+        return isset($_GET[self::$registerName]);
     }
 
     public function getUsername()
@@ -98,15 +99,30 @@ class LayoutView
         return $this->loginView->getUsername();
     }
 
+    public function getUsernamePostback()
+    {
+        return $this->registerView->getRegisterUsername();
+    }
+
+    public function getPasswordPostBack()
+    {
+        return $this->registerView->getRegisterPassword();
+    }
+
     public function isLoggingOut()
     {
         return $this->loginView->getLogout();
     }
 
+    public function isRegisteringUser()
+    {
+        return $this->registerView->getRegisterPostback();
+    }
+
     private function renderLink()
     {
-        if (!isset($_GET['register'])) {
-            return '<a href="./index.php?register=true">Register a new user</a>';
+        if (!isset($_GET[self::$registerName])) {
+            return '<a href="./index.php?' . self::$registerName . '">Register a new user</a>';
         }
 
         return '<a href=?>Back to login</a>';
