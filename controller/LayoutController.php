@@ -48,6 +48,7 @@ class LayoutController
                 $password = $this->view->getPasswordPostback();
                 if (!is_null($username) && !is_null($password)) {
                     $this->userStorage->addUser($username, $password);
+                    $this->setMessage('Registered new user.');
                 }
             }} else {
             $this->session = new \Model\Session();

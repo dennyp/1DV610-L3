@@ -18,9 +18,9 @@ class UserRuleException extends \Exception
 
     public function checkUserRules(string $name, string $password, string $passwordRepeat)
     {
-        $name = $this->trimWhitespace($name);
-        $password = $this->trimWhitespace($password);
-        $passwordRepeat = $this->trimWhitespace($passwordRepeat);
+        $name = Util::removeWhitespace($name);
+        $password = Util::removeWhitespace($password);
+        $passwordRepeat = Util::removeWhitespace($passwordRepeat);
 
         $message = '';
         $message .= $this->containingBadCharacters($name);
@@ -31,11 +31,6 @@ class UserRuleException extends \Exception
         if (Util::isNotNull($message)) {
             throw new \Exception($message);
         }
-    }
-
-    private function trimWhitespace($str)
-    {
-        return trim($str);
     }
 
     private function checkName(string $name)

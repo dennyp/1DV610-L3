@@ -23,9 +23,9 @@ class UserStorage extends DatabaseHandler
         $password = Util::removeWhitespace($password);
 
         if (Util::isNotNullOrEmpty($name) &&
-            Util::isNotNullOrEmpty($password)) {
-            Util::removeBadCharacters($name);
-            Util::removeBadCharacters($password);
+            Util::isNotNullOrEmpty($password) &&
+            Util::hasNoBadCharacters($name) &&
+            Util::hasNoBadCharacters($password)) {
 
             $query = 'INSERT INTO user (Username, Password) VALUES (?, ?)';
 

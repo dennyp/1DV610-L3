@@ -9,6 +9,11 @@ class Util
         return strcmp($rawString, \strip_tags($rawString)) !== 0;
     }
 
+    public static function hasNoBadCharacters($rawString): bool
+    {
+        return strcmp($rawString, \strip_tags($rawString)) === 0;
+    }
+
     public static function isNotNullOrEmpty(string $str): bool
     {
         return !is_null($str) && $str !== '';
