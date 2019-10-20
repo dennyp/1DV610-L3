@@ -14,12 +14,12 @@ class User
         $this->password = $password;
     }
 
-    public function getUsername(): string
+    public function getUsername()
     {
         return $this->name;
     }
 
-    public function getPassword(): string
+    public function getPassword()
     {
         return $this->password;
     }
