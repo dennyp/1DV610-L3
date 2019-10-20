@@ -34,7 +34,7 @@ class UserStorage extends DatabaseHandler
 
     public function findUserId(string $username)
     {
-        $query = "SELECT UserId FROM user WHERE username=?";
+        $query = "SELECT UserId FROM user WHERE BINARY username=?";
         if ($statement = $this->getConnection()->prepare($query)) {
             $statement->bind_param('s', $username);
             $statement->execute();
@@ -48,7 +48,7 @@ class UserStorage extends DatabaseHandler
 
     public function findOneUser(string $username): \Model\User
     {
-        $query = "SELECT username, password FROM user WHERE username=?";
+        $query = "SELECT username, password FROM user WHERE BINARY username=?";
         if ($statement = $this->getConnection()->prepare($query)) {
             $statement->bind_param('s', $username);
             $statement->execute();

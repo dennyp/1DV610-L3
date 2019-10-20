@@ -66,7 +66,6 @@ class LayoutController
 
                     if ($validated) {
                         $userId = $userStorage->findUserId($this->view->getUsername());
-
                         $this->session->setSession($userId);
                     }
                 }
