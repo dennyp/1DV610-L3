@@ -36,7 +36,7 @@ class UserRuleException extends \Exception
     private function checkName(string $name)
     {
         if (Util::isNotNull($name)) {
-            if ($this->userRule->isMinimumUsernameLength($name)) {
+            if ($this->userRule->isBelowMinimumUsernameLength($name)) {
                 return 'Username has too few characters, at least ' .
                 $this->userRule->getMinUsernameLength() . ' characters. ';
             } else if ($this->userStorage->isUsernameExisting(Util::removeBadCharacters($name))) {
@@ -48,7 +48,7 @@ class UserRuleException extends \Exception
     private function checkPassword($password)
     {
         if (Util::isNotNull($password) &&
-            $this->userRule->isMinimumPasswordLength($password)) {
+            $this->userRule->isBelowMinimumPasswordLength($password)) {
             return 'Password has too few characters, at least ' .
             $this->userRule->getMinPasswordLength() . ' characters. ';
         }
