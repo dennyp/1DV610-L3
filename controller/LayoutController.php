@@ -6,6 +6,7 @@ require_once 'model/Auth.php';
 require_once 'model/Session.php';
 require_once 'model/UserStorage.php';
 require_once 'view/RegisterView.php';
+require_once 'model/Util.php';
 
 class LayoutController
 {
@@ -44,11 +45,12 @@ class LayoutController
         if ($this->view->getRegister()) {
             $this->view->render();
             if ($this->view->isRegisteringUser()) {
-                $username = $this->view->getUsernamePostback();
-                $password = $this->view->getPasswordPostback();
-                if (!is_null($username) && !is_null($password)) {
-                    $this->userStorage->addUser($username, $password);
+                $user = new \Model\User($this->view->getUsernamePostback(),
+                    $this->view->getPasswordPostback());
+                if (\Model\Util::isNotNull($user->getUsername()) && \Model\Util::isNotNull($user->getPassword())) {
+                    $this->userStorage->addUser($user);
                     $this->setMessage('Registered new user.');
+                    // $this->view->goToMainPage();
                 }
             }} else {
             $this->session = new \Model\Session();

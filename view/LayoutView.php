@@ -127,4 +127,10 @@ class LayoutView
 
         return '<a href=?>Back to login</a>';
     }
+
+    public function goToMainPage()
+    {
+        header('Location: ./');
+        exit;
+    }
 }
