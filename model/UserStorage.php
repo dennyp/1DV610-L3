@@ -4,16 +4,24 @@ namespace Model;
 
 require_once 'DatabaseHandler.php';
 require_once 'User.php';
+require_once 'UserRule.php';
 
 class UserStorage extends DatabaseHandler
 {
+    private $userRule;
+
+    public function __construct()
+    {
+        $this->userrule = new \Model\UserRule();
+    }
+
     public function addUser(string $name, string $password)
     {
         $name = $this->removeWhitespace($name);
         $password = $this->removeWhitespace($password);
 
-        if ($this->isNotNullOrEmpty($name) &&
-            $this->isNotNullOrEmpty($password)) {
+        if ($this->userRule->isNotNullOrEmpty($name) &&
+            $this->userRule->isNotNullOrEmpty($password)) {
             $query = 'INSERT INTO user (Username, Password) VALUES (?, ?)';
 
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -31,11 +39,6 @@ class UserStorage extends DatabaseHandler
     private function removeWhitespace(string $str): string
     {
         return trim($str);
-    }
-
-    private function isNotNullOrEmpty($param)
-    {
-        return !is_null($param) && $param !== '';
     }
 
     public function findUserId(string $username)

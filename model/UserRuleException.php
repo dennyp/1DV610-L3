@@ -18,6 +18,10 @@ class UserRuleException extends \Exception
 
     public function checkUserRules(string $name, string $password, string $passwordRepeat)
     {
+        $name = $this->trimWhitespace($name);
+        $password = $this->trimWhitespace($password);
+        $passwordRepeat = $this->trimWhitespace($passwordRepeat);
+
         $message = '';
         $message .= $this->containingBadCharacters($name);
         $message .= $this->checkName($name);
@@ -29,9 +33,14 @@ class UserRuleException extends \Exception
         }
     }
 
+    private function trimWhitespace($str)
+    {
+        return trim($str);
+    }
+
     private function checkName(string $name)
     {
-        if ($this->userRule->isNotNull($name)) {
+        if ($this->userRule->isNotNullOrEmpty($name)) {
             if ($this->userRule->isMinimumUsernameLength($name)) {
                 return 'Username has too few characters, at least ' .
                 $this->userRule->getMinUsernameLength() . ' characters. ';
@@ -43,7 +52,7 @@ class UserRuleException extends \Exception
 
     private function checkPassword($password)
     {
-        if ($this->userRule->isNotNull($password) &&
+        if ($this->userRule->isNotNullOrEmpty($password) &&
             $this->userRule->isMinimumPasswordLength($password)) {
             return 'Password has too few characters, at least ' .
             $this->userRule->getMinPasswordLength() . ' characters. ';
