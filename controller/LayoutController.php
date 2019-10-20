@@ -42,71 +42,106 @@ class LayoutController
 
     private function renderPage()
     {
-        if ($this->view->getRegister()) {
+        if ($this->view->isRegistering()) {
             $this->view->render();
-            if ($this->view->isRegisteringUser()) {
-                $user = new \Model\User($this->view->getUsernamePostback(),
-                    $this->view->getPasswordPostback());
-                if (\Model\Util::isNotNull($user->getUsername()) && \Model\Util::isNotNull($user->getPassword())) {
-                    $this->userStorage->addUser($user);
-                    $this->setMessage('Registered new user.');
-                    // $this->view->goToMainPage();
-                }
-            }} else {
+            $this->saveUserOnPost();
+        } else {
             $this->session = new \Model\Session();
-
-            if (!$this->session->checkValidSession()) {
-                if ($this->isUsernameNotNull() && $this->isUsernameEmpty()) {
-                    $this->setMessage('Username is missing');
-                } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
-                    $this->setMessage('Password is missing');
-                } else if ($this->isUserNameNotNull() && $this->isPasswordNotNull()) {
-                    $user = new \Model\User($this->view->getUsername(),
-                        $this->view->getPassword());
-                    $userStorage = new \Model\UserStorage();
-                    $validated = $this->auth->validateUser($user);
-                    $this->setValidationMessage($validated);
-
-                    if ($validated) {
-                        $userId = $userStorage->findUserId($this->view->getUsername());
-                        $this->session->setSession($userId);
-                    }
-                }
+            if ($this->isNoValidSession()) {
+                $this->checkInputFields();
             } else if ($this->view->isLoggingOut()) {
-                $this->setMessage('Bye bye!');
-                $this->session->removeSession();
+                $this->logout();
             }
 
             $this->view->render($this->getMessage());
         }
     }
 
-    private function isUserNameNotNull()
+    private function isNoValidSession(): bool
+    {
+        return !$this->session->checkValidSession();
+    }
+
+    private function checkInputFields()
+    {
+        if ($this->isUsernameNotNull() && $this->isUsernameEmpty()) {
+            $this->setMessage('Username is missing');
+        } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
+            $this->setMessage('Password is missing');
+        } else if ($this->isUserNameNotNull() && $this->isPasswordNotNull()) {
+            $validated = $this->validateUser();
+            $this->setSessionIfValidated($validated);
+        }
+    }
+
+    private function logout()
+    {
+        $this->setMessage('Bye bye!');
+        $this->session->removeSession();
+    }
+
+    private function isUserNotNull(\Model\User $user): bool
+    {
+        return \Model\Util::isNotNull($user->getUsername()) && \Model\Util::isNotNull($user->getPassword());
+    }
+
+    private function isUserNameNotNull(): bool
     {
         return !is_null($this->view->getUsername());
     }
 
-    private function isUsernameEmpty()
+    private function isUsernameEmpty(): bool
     {
         return empty($this->view->getUsername());
     }
 
-    private function isPasswordNotNull()
+    private function isPasswordNotNull(): bool
     {
         return !is_null($this->view->getPassword());
     }
 
-    private function isPasswordEmpty()
+    private function isPasswordEmpty(): bool
     {
         return empty($this->view->getPassword());
     }
 
-    private function setValidationMessage($validated)
+    private function validateUser(): bool
+    {
+        $user = new \Model\User($this->view->getUsername(),
+            $this->view->getPassword());
+        $validated = $this->auth->validateUser($user);
+        $this->setValidationMessage($validated);
+        return $validated;
+    }
+
+    private function setValidationMessage(bool $validated)
     {
         if (!$validated) {
             $this->setMessage('Wrong name or password');
         } else {
             $this->setMessage('Welcome');
+        }
+    }
+
+    private function setSessionIfValidated(bool $validated)
+    {
+        if ($validated) {
+            $userStorage = new \Model\UserStorage();
+            $userId = $userStorage->findUserId($this->view->getUsername());
+            $this->session->setSession($userId);
+        }
+    }
+
+    private function saveUserOnPost()
+    {
+        if ($this->view->isRegisteringUser()) {
+            $user = new \Model\User($this->view->getUsernamePostback(),
+                $this->view->getPasswordPostback());
+            if ($this->isUserNotNull($user)) {
+                $this->userStorage->addUser($user);
+                $this->setMessage('Registered new user.');
+                $this->view->goToMainPage();
+            }
         }
     }
 }

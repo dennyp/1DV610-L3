@@ -65,7 +65,7 @@ class LayoutView
 
     private function getHTMLBasedOnLoggedInOrRegister($message)
     {
-        if ($this->getRegister()) {
+        if ($this->isRegistering()) {
             return $this->registerView->render();
         } else if ($this->isLoggedIn()) {
             return $this->loginView->renderLoggedIn($message);
@@ -89,7 +89,7 @@ class LayoutView
         return $this->loginView->getPassword();
     }
 
-    public function getRegister()
+    public function isRegistering(): bool
     {
         return isset($_GET[self::$registerName]);
     }
