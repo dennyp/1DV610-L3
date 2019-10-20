@@ -3,7 +3,7 @@
 namespace Model;
 
 require_once 'DatabaseHandler.php';
-require_once 'model/UserStorage.php';
+require_once 'UserStorage.php';
 
 class Auth
 {
@@ -11,10 +11,7 @@ class Auth
     {
         $userStorage = new \Model\UserStorage();
         $dbUser = $userStorage->findOneUser($user->getUsername());
-
-        $dbUsername = $dbUser['username'] ?? null;
-        $dbPassword = $dbUser['password'] ?? null;
-
-        return password_verify($user->getPassword(), $dbPassword);
+        var_dump($dbUser);
+        return password_verify($user->getPassword(), $dbUser->getPassword());
     }
 }

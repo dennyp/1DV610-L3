@@ -3,6 +3,7 @@
 namespace Model;
 
 require_once 'DatabaseHandler.php';
+require_once 'User.php';
 
 class UserStorage extends DatabaseHandler
 {
@@ -31,7 +32,7 @@ class UserStorage extends DatabaseHandler
         return trim($str);
     }
 
-    public function findUserId($username)
+    public function findUserId(string $username)
     {
         $query = "SELECT UserId FROM user WHERE username=?";
         if ($statement = $this->getConnection()->prepare($query)) {
@@ -47,22 +48,22 @@ class UserStorage extends DatabaseHandler
 
     public function findOneUser(string $username)
     {
-        $conn = $this->getConnection();
         $query = "SELECT username, password FROM user WHERE username=?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param('s', $username);
-        $stmt->execute();
-        $stmt->bind_result($dbUsername, $dbPassword);
-        $stmt->store_result();
+        if ($statement = $this->getConnection()->prepare($query)) {
+            $statement->bind_param('s', $username);
+            $statement->execute();
+            $statement->bind_result($dbUsername, $dbPassword);
+            $statement->fetch();
+            $statement->close();
 
-        while ($stmt->fetch()) {
-            $data = ["username" => $dbUsername, "password" => $dbPassword];
+            $user = new \Model\User($dbUsername, $dbPassword);
         }
+        $this->getConnection()->close();
 
-        return $data ?? [];
+        return $user;
     }
 
-    private function getAllUsers($username)
+    private function getAllUsers(string $username)
     {
         $conn = $this->getConnection();
         $query = "SELECT * FROM user";
