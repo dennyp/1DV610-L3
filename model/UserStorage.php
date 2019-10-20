@@ -46,7 +46,7 @@ class UserStorage extends DatabaseHandler
         return $userId;
     }
 
-    public function findOneUser(string $username)
+    public function findOneUser(string $username): \Model\User
     {
         $query = "SELECT username, password FROM user WHERE username=?";
         if ($statement = $this->getConnection()->prepare($query)) {
@@ -76,5 +76,20 @@ class UserStorage extends DatabaseHandler
         }
 
         return $data;
+    }
+
+    public function isUsernameExisting(string $username): bool
+    {
+        $query = "SELECT username FROM user WHERE username=?";
+        if ($statement = $this->getConnection()->prepare($query)) {
+            $statement->bind_param('s', $username);
+            $statement->execute();
+            $statement->bind_result($user);
+            $statement->fetch();
+            $statement->close();
+        }
+        $this->getConnection()->close();
+
+        return !is_null($user);
     }
 }

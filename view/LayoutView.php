@@ -9,6 +9,7 @@ require_once 'model/DateTimeGenerator.php';
 class LayoutView
 {
     private $loginView;
+    private $registerView;
     private $date;
     private $dateTimeView;
     private $cookie;
@@ -21,6 +22,8 @@ class LayoutView
 
         $this->dateTime = new \Model\DateTimeGenerator();
         $this->dateTimeView = new DateTimeView($this->dateTime->getTime());
+
+        $this->registerView = new \View\RegisterView();
 
         $this->session = new \Model\Session();
     }
@@ -38,7 +41,7 @@ class LayoutView
           ' . $this->isLoggedInHTML() . '
 
           <div class="container">
-              ' . $this->getHTMLBasedOnLoggedIn($message) . '
+              ' . $this->getHTMLBasedOnLoggedInOrRegister($message) . '
 
               ' . $this->dateTimeView->show() . '
           </div>
@@ -53,14 +56,17 @@ class LayoutView
         if ($this->isLoggedIn()) {
             $html = '<h2>Logged in</h2>';
         } else {
-            $html = '<h2>Not logged in</h2>';
+            $html = $this->renderLink();
+            $html .= '<h2>Not logged in</h2>';
         }
         return $html;
     }
 
-    private function getHTMLBasedOnLoggedIn($message)
+    private function getHTMLBasedOnLoggedInOrRegister($message)
     {
-        if ($this->isLoggedIn()) {
+        if ($this->getRegister()) {
+            return $this->registerView->render();
+        } else if ($this->isLoggedIn()) {
             return $this->loginView->renderLoggedIn($message);
         } else {
             return $this->loginView->renderLogin($message);
@@ -82,6 +88,11 @@ class LayoutView
         return $this->loginView->getPassword();
     }
 
+    public function getRegister()
+    {
+        return isset($_GET['register']);
+    }
+
     public function getUsername()
     {
         return $this->loginView->getUsername();
@@ -90,5 +101,14 @@ class LayoutView
     public function isLoggingOut()
     {
         return $this->loginView->getLogout();
+    }
+
+    private function renderLink()
+    {
+        if (!isset($_GET['register'])) {
+            return '<a href="./index.php?register=true">Register a new user</a>';
+        }
+
+        return '<a href=?>Back to login</a>';
     }
 }
