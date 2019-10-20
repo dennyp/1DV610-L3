@@ -4,17 +4,12 @@ namespace View;
 
 class LoginView
 {
-
     private static $login = 'LoginView::Login';
     private static $logout = 'LoginView::Logout';
     private static $name = 'LoginView::UserName';
     private static $password = 'LoginView::Password';
     private static $keepLoggedIn = 'LoginView::KeepMeLoggedIn';
     private static $messageId = 'LoginView::Message';
-
-    public function __construct()
-    {
-    }
 
     public function renderLogin($message)
     {
@@ -49,7 +44,7 @@ class LoginView
 		';
     }
 
-    private function generateLogoutButtonHTML($message)
+    private function generateLogoutButtonHTML(string $message)
     {
         return '
 			<form  method="post" >
@@ -72,5 +67,10 @@ class LoginView
     public function getKeepMeLoggedIn()
     {
         return $_POST[self::$keepLoggedIn] ?? null;
+    }
+
+    public function getLogout()
+    {
+        return $_POST[self::$logout] ?? null;
     }
 }

@@ -8,12 +8,12 @@ require_once 'model/DateTimeGenerator.php';
 
 class LayoutView
 {
-
     private $loginView;
     private $date;
     private $dateTimeView;
     private $cookie;
     private static $cookieName = 'PHPSESSID';
+    private $session;
 
     public function __construct(\View\LoginView $view)
     {
@@ -21,6 +21,8 @@ class LayoutView
 
         $this->dateTime = new \Model\DateTimeGenerator();
         $this->dateTimeView = new DateTimeView($this->dateTime->getTime());
+
+        $this->session = new \Model\Session();
     }
 
     public function render($message = '')
@@ -67,12 +69,12 @@ class LayoutView
 
     private function isLoggedIn()
     {
-        return $_COOKIE[self::$cookieName] ?? null;
+        return $this->session->checkValidSession();
     }
 
-    public function getUsername()
+    public function getLogout()
     {
-        return $this->loginView->getUsername();
+        return $this->loginView->getLogout();
     }
 
     public function getPassword()
@@ -80,15 +82,13 @@ class LayoutView
         return $this->loginView->getPassword();
     }
 
-    public function setLoggedIn()
+    public function getUsername()
     {
-        $this->cookie = new \Model\Cookie(self::$cookieName, 'validated', time() + (60 * 60 * 24 * 30));
-        $this->refreshPage();
+        return $this->loginView->getUsername();
     }
 
-    private function refreshPage()
+    public function isLoggingOut()
     {
-        header("Location: ./");
-        exit();
+        return $this->loginView->getLogout();
     }
 }

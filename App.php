@@ -6,6 +6,8 @@ require_once 'view/LoginView.php';
 require_once 'model/User.php';
 require_once 'controller/LayoutController.php';
 
+session_start();
+
 class App
 {
     private $loginView;
