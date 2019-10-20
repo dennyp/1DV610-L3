@@ -31,13 +31,14 @@ class UserRuleException extends \Exception
 
     private function checkName(string $name)
     {
-        if ($this->userRule->isNotNullOrWhitespace($name) &&
-            $this->userRule->isMinimumUsernameLength($name)) {
+      if($this->userRule->isNotNullOrWhitespace($name)){
+        if ($this->userRule->isMinimumUsernameLength($name)) {
             return 'Username has too few characters, at least ' .
             $this->userRule->getMinUsernameLength() . ' characters. ';
         } else if ($this->userStorage->isUsernameExisting($name)) {
             return "User exists, pick another username. ";
         }
+      }
     }
 
     private function checkPassword($password)
