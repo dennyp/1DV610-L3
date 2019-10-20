@@ -43,6 +43,7 @@ class UserRuleException extends \Exception
                 return "User exists, pick another username. ";
             }
         }
+        return '';
     }
 
     private function checkPassword(string $password): string
@@ -52,6 +53,7 @@ class UserRuleException extends \Exception
             return 'Password has too few characters, at least ' .
             $this->userRule->getMinPasswordLength() . ' characters. ';
         }
+        return '';
     }
 
     private function containingBadCharacters(string $name): string
