@@ -33,7 +33,7 @@ class UserRuleException extends \Exception
         }
     }
 
-    private function checkName(string $name)
+    private function checkName(string $name): string
     {
         if (Util::isNotNull($name)) {
             if ($this->userRule->isBelowMinimumUsernameLength($name)) {
@@ -45,7 +45,7 @@ class UserRuleException extends \Exception
         }
     }
 
-    private function checkPassword($password)
+    private function checkPassword(string $password): string
     {
         if (Util::isNotNull($password) &&
             $this->userRule->isBelowMinimumPasswordLength($password)) {
@@ -54,17 +54,19 @@ class UserRuleException extends \Exception
         }
     }
 
-    private function containingBadCharacters($name)
+    private function containingBadCharacters(string $name): string
     {
         if (Util::hasBadCharacters($name)) {
             return "Username contains invalid characters. ";
         }
+        return '';
     }
 
-    private function passwordsNotMatching($password, $passwordRepeat)
+    private function passwordsNotMatching(string $password, string $passwordRepeat): string
     {
         if (Util::isNotMatch($password, $passwordRepeat)) {
             return "Passwords do not match. ";
         }
+        return '';
     }
 }

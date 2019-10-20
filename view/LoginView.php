@@ -21,7 +21,7 @@ class LoginView
         return $this->generateLogoutButtonHTML($message);
     }
 
-    private function generateLoginFormHTML(string $message)
+    private function generateLoginFormHTML(string $message): string
     {
         return '
 			<form method="post">
@@ -44,7 +44,7 @@ class LoginView
 		';
     }
 
-    private function generateLogoutButtonHTML(string $message)
+    private function generateLogoutButtonHTML(string $message): string
     {
         return '
 			<form  method="post" >

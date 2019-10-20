@@ -17,12 +17,12 @@ class DateTimeView
         return $this->generateTimeHTML();
     }
 
-    private function generateTimeHTML()
+    private function generateTimeHTML(): string
     {
         return '<p>' . $this->date->getDayOfWeek() . ', the ' . $this->date->getDayOfMonth() . $this->getDayOfMonthEnding() . 'of ' . $this->date->getMonth() . ' ' . $this->date->getYear() . ', The time is ' . $this->date->getTimeOfDay() . '</p>';
     }
 
-    private function getDayOfMonthEnding()
+    private function getDayOfMonthEnding(): string
     {
         if ($this->date->getDayOfMonth() == '1') {
             return 'st ';

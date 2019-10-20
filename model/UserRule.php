@@ -7,12 +7,12 @@ class UserRule
     private const minUsernameLength = 3;
     private const minPasswordLength = 6;
 
-    public function getMinUsernameLength()
+    public function getMinUsernameLength(): int
     {
         return self::minUsernameLength;
     }
 
-    public function getMinPasswordLength()
+    public function getMinPasswordLength(): int
     {
         return self::minPasswordLength;
     }

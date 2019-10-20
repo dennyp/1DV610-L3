@@ -5,7 +5,7 @@ namespace Model;
 require_once 'DatabaseHandler.php';
 require_once 'User.php';
 require_once 'UserRule.php';
-require_once 'helper/Util.php';
+require_once 'Util.php';
 
 class UserStorage extends DatabaseHandler
 {
@@ -17,10 +17,10 @@ class UserStorage extends DatabaseHandler
         $this->userRule = new \Model\UserRule();
     }
 
-    public function addUser(string $name, string $password)
+    public function addUser(\Model\User $user)
     {
-        $name = Util::removeWhitespace($name);
-        $password = Util::removeWhitespace($password);
+        $name = Util::removeWhitespace($user->getUsername());
+        $password = Util::removeWhitespace($user->getPassword());
 
         if (Util::isNotNullOrEmpty($name) &&
             Util::isNotNullOrEmpty($password) &&
@@ -43,7 +43,7 @@ class UserStorage extends DatabaseHandler
         }
     }
 
-    public function findUserId(string $username)
+    public function findUserId(string $username): string
     {
         $query = "SELECT UserId FROM user WHERE BINARY username=?";
         if ($statement = $this->getConnection()->prepare($query)) {
@@ -66,15 +66,13 @@ class UserStorage extends DatabaseHandler
             $statement->bind_result($dbUsername, $dbPassword);
             $statement->fetch();
             $statement->close();
+            $this->getConnection()->close();
 
-            $user = new \Model\User($dbUsername, $dbPassword);
+            return new \Model\User($dbUsername, $dbPassword);
         }
-        $this->getConnection()->close();
-
-        return $user;
     }
 
-    private function getAllUsers(string $username)
+    private function getAllUsers(string $username): array
     {
         $conn = $this->getConnection();
         $query = "SELECT * FROM user";

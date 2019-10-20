@@ -38,7 +38,7 @@ class RegisterView
         return $this->generateRegisterFormHTML($message);
     }
 
-    private function generateRegisterFormHTML(string $message)
+    private function generateRegisterFormHTML(string $message): string
     {
         return '
     <form method="post" >
@@ -61,27 +61,27 @@ class RegisterView
   ';
     }
 
-    private function getParameter(string $param)
+    private function getParameter(string $param): string
     {
         return $_POST[$param] ?? '';
     }
 
-    public function getRegisterButtonName()
+    public function getRegisterButtonName(): string
     {
         return self::$register;
     }
 
-    public function getRegisterPostback()
+    public function getRegisterPostback(): bool
     {
         return isset($_POST[self::$register]);
     }
 
-    public function getRegisterUsername()
+    public function getRegisterUsername(): string
     {
         return $this->getParameter(self::$name);
     }
 
-    public function getRegisterPassword()
+    public function getRegisterPassword(): string
     {
         return $this->getParameter(self::$password);
     }

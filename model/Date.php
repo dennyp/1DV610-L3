@@ -20,27 +20,27 @@ class Date
         $this->timeOfDay = $timeOfDay;
     }
 
-    public function getDayOfWeek()
+    public function getDayOfWeek(): string
     {
         return $this->dayOfWeek;
     }
 
-    public function getDayOfMonth()
+    public function getDayOfMonth(): string
     {
         return $this->dayOfMonth;
     }
 
-    public function getMonth()
+    public function getMonth(): string
     {
         return $this->month;
     }
 
-    public function getYear()
+    public function getYear(): string
     {
         return $this->year;
     }
 
-    public function getTimeOfDay()
+    public function getTimeOfDay(): string
     {
         return $this->timeOfDay;
     }
