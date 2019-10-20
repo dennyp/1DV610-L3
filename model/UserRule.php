@@ -27,12 +27,12 @@ class UserRule
         return strlen($password) < $this->getMinPasswordLength();
     }
 
-    public function isNotNull(string $name)
+    public function isNotNullOrEmpty(string $str): bool
     {
-        return !is_null($name);
+        return !is_null($str) && $str !== '';
     }
 
-    public function hasBadCharacters($rawString)
+    public function hasBadCharacters($rawString): bool
     {
         return strcmp($rawString, \strip_tags($rawString)) !== 0;
     }
