@@ -26,8 +26,8 @@ class UserStorage extends DatabaseHandler
             Util::isNotNullOrEmpty($password) &&
             Util::hasNoBadCharacters($name) &&
             Util::hasNoBadCharacters($password) &&
-            $this->userRule->isBelowMinimumUsernameLength($name) &&
-            $this->userRule->isBelowMinimumPasswordLength($password)) {
+            $this->userRule->isAboveMinimumUsernameLength($name) &&
+            $this->userRule->isAboveMinimumPasswordLength($password)) {
 
             $query = 'INSERT INTO user (Username, Password) VALUES (?, ?)';
 

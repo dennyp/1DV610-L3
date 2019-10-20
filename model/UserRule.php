@@ -17,9 +17,19 @@ class UserRule
         return self::minPasswordLength;
     }
 
+    public function isAboveMinimumUsernameLength(string $name): bool
+    {
+        return strlen($name) >= $this->getMinUsernameLength();
+    }
+
     public function isBelowMinimumUsernameLength(string $name): bool
     {
         return strlen($name) < $this->getMinUsernameLength();
+    }
+
+    public function isAboveMinimumPasswordLength(string $password): bool
+    {
+        return strlen($password) >= $this->getMinPasswordLength();
     }
 
     public function isBelowMinimumPasswordLength(string $password): bool
