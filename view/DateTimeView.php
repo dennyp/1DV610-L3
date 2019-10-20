@@ -24,14 +24,23 @@ class DateTimeView
 
     private function getDayOfMonthEnding(): string
     {
-        if ($this->date->getDayOfMonth() == '1') {
+        if ($this->endsWith($this->date->getDayOfMonth(), '1') ||
+            $this->endsWith($this->date->getDayOfMonth(), '21')) {
             return 'st ';
-        } else if ($this->date->getDayOfMonth() == '2') {
+        } else if ($this->endsWith($this->date->getDayOfMonth(), '2') ||
+            $this->endsWith($this->date->getDayOfMonth(), '22')) {
             return 'nd ';
-        } else if ($this->date->getDayOfMonth() == '3') {
+        } else if ($this->endsWith($this->date->getDayOfMonth(), '3') ||
+            $this->endsWith($this->date->getDayOfMonth(), '23')) {
             return 'rd ';
         }
 
         return 'th ';
+    }
+
+    private function endsWith(string $toSearch, string $valueToFind): string
+    {
+        $length = strlen($valueToFind);
+        return (substr($toSearch, -$length) === $valueToFind);
     }
 }
