@@ -36,4 +36,9 @@ class UserRule
     {
         return strcmp($rawString, \strip_tags($rawString)) !== 0;
     }
+
+    public function removeBadCharacters($rawString)
+    {
+        return filter_var($rawString, FILTER_SANITIZE_STRING);
+    }
 }

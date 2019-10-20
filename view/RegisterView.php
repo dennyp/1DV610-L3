@@ -11,10 +11,12 @@ class RegisterView
     private static $passwordRepeat = 'RegisterView::PasswordRepeat';
     private static $register = 'RegisterView::Register';
     private static $messageId = 'RegisterView::Message';
+    private $userRule;
     private $userRuleException;
 
     public function __construct()
     {
+        $this->userRule = new \Model\UserRule();
         $this->userRuleException = new \Model\UserRuleException();
     }
 
@@ -45,7 +47,7 @@ class RegisterView
         <p id="' . self::$messageId . '">' . $message . '</p>
 
         <label for="' . self::$name . '">Username :</label>
-        <input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->removeBadCharacters($this->getParameter(self::$name)) . '" />
+        <input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->userRule->removeBadCharacters($this->getParameter(self::$name)) . '" />
 
         <label for="' . self::$password . '">Password :</label>
         <input type="password" id="' . self::$password . '" name="' . self::$password . '" />
@@ -82,10 +84,5 @@ class RegisterView
     public function getRegisterPassword()
     {
         return $this->getParameter(self::$password);
-    }
-
-    private function removeBadCharacters($rawString)
-    {
-        return filter_var($rawString, FILTER_SANITIZE_STRING);
     }
 }

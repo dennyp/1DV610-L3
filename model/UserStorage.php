@@ -80,7 +80,7 @@ class UserStorage extends DatabaseHandler
 
     public function isUsernameExisting(string $username): bool
     {
-        $query = "SELECT username FROM user WHERE username=?";
+        $query = "SELECT username FROM user WHERE BINARY username=?";
         if ($statement = $this->getConnection()->prepare($query)) {
             $statement->bind_param('s', $username);
             $statement->execute();
@@ -89,7 +89,7 @@ class UserStorage extends DatabaseHandler
             $statement->close();
         }
         $this->getConnection()->close();
-
+        var_dump($user);
         return !is_null($user);
     }
 }

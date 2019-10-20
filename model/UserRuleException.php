@@ -19,10 +19,10 @@ class UserRuleException extends \Exception
     public function checkUserRules(string $name, string $password, string $passwordRepeat)
     {
         $message = '';
+        $message .= $this->containingBadCharacters($name);
         $message .= $this->checkName($name);
         $message .= $this->checkPassword($password);
         $message .= $this->passwordsNotMatching($password, $passwordRepeat);
-        $message .= $this->containingBadCharacters($name);
 
         if ($this->isNotNull($message)) {
             throw new \Exception($message);
@@ -31,14 +31,14 @@ class UserRuleException extends \Exception
 
     private function checkName(string $name)
     {
-      if($this->userRule->isNotNull($name)){
-        if ($this->userRule->isMinimumUsernameLength($name)) {
-            return 'Username has too few characters, at least ' .
-            $this->userRule->getMinUsernameLength() . ' characters. ';
-        } else if ($this->userStorage->isUsernameExisting($name)) {
-            return "User exists, pick another username. ";
+        if ($this->userRule->isNotNull($name)) {
+            if ($this->userRule->isMinimumUsernameLength($name)) {
+                return 'Username has too few characters, at least ' .
+                $this->userRule->getMinUsernameLength() . ' characters. ';
+            } else if ($this->userStorage->isUsernameExisting($this->userRule->removeBadCharacters($name))) {
+                return "User exists, pick another username. ";
+            }
         }
-      }
     }
 
     private function checkPassword($password)
@@ -53,7 +53,7 @@ class UserRuleException extends \Exception
     private function containingBadCharacters($name)
     {
         if ($this->userRule->hasBadCharacters($name)) {
-            $message .= "Username contains invalid characters. ";
+            return "Username contains invalid characters. ";
         }
     }
 
