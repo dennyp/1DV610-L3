@@ -47,7 +47,7 @@ class RegisterView
         <p id="' . self::$messageId . '">' . $message . '</p>
 
         <label for="' . self::$name . '">Username :</label>
-        <input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $this->userRule->removeBadCharacters($this->getParameter(self::$name)) . '" />
+        <input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . \Model\Util::removeBadCharacters($this->getParameter(self::$name)) . '" />
 
         <label for="' . self::$password . '">Password :</label>
         <input type="password" id="' . self::$password . '" name="' . self::$password . '" />
