@@ -4,17 +4,13 @@ namespace Model;
 
 require_once 'DatabaseHandler.php';
 require_once 'User.php';
-require_once 'UserRule.php';
 require_once 'Util.php';
 
 class UserStorage extends DatabaseHandler
 {
-    private $userRule;
-
     public function __construct()
     {
         parent::__construct();
-        $this->userRule = new \Model\UserRule();
     }
 
     public function addUser(\Model\User $user)
@@ -22,12 +18,14 @@ class UserStorage extends DatabaseHandler
         $name = Util::removeWhitespace($user->getUsername());
         $password = Util::removeWhitespace($user->getPassword());
 
-        if (Util::isNotNullOrEmpty($name) &&
+        if (
+            Util::isNotNullOrEmpty($name) &&
             Util::isNotNullOrEmpty($password) &&
             Util::hasNoBadCharacters($name) &&
             Util::hasNoBadCharacters($password) &&
-            $this->userRule->isAboveMinimumUsernameLength($name) &&
-            $this->userRule->isAboveMinimumPasswordLength($password)) {
+            $user->isAboveMinimumUsernameLength($name) &&
+            $user->isAboveMinimumPasswordLength($password)
+        ) {
 
             $query = 'INSERT INTO user (Username, Password) VALUES (?, ?)';
 

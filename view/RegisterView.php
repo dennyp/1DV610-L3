@@ -11,12 +11,10 @@ class RegisterView
     private static $passwordRepeat = 'RegisterView::PasswordRepeat';
     private static $register = 'RegisterView::Register';
     private static $messageId = 'RegisterView::Message';
-    private $userRule;
     private $userRuleException;
 
     public function __construct()
     {
-        $this->userRule = new \Model\UserRule();
         $this->userRuleException = new \Model\UserRuleException();
     }
 

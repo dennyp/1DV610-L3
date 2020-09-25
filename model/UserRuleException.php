@@ -2,17 +2,14 @@
 
 namespace Model;
 
-require_once 'UserRule.php';
 require_once 'UserStorage.php';
 
 class UserRuleException extends \Exception
 {
-    private $userRule;
     private $userStorage;
 
     public function __construct()
     {
-        $this->userRule = new \Model\UserRule();
         $this->userStorage = new \Model\UserStorage();
     }
 
@@ -36,9 +33,11 @@ class UserRuleException extends \Exception
     private function checkName(string $name): string
     {
         if (Util::isNotNull($name)) {
-            if ($this->userRule->isBelowMinimumUsernameLength($name)) {
+            $user = new \Model\User($name, '');
+
+            if ($user->isBelowMinimumUsernameLength($name)) {
                 return 'Username has too few characters, at least ' .
-                $this->userRule->getMinUsernameLength() . ' characters. ';
+                    $user->getMinUsernameLength() . ' characters. ';
             } else if ($this->userStorage->isUsernameExisting(Util::removeBadCharacters($name))) {
                 return "User exists, pick another username. ";
             }
@@ -48,10 +47,13 @@ class UserRuleException extends \Exception
 
     private function checkPassword(string $password): string
     {
-        if (Util::isNotNull($password) &&
-            $this->userRule->isBelowMinimumPasswordLength($password)) {
-            return 'Password has too few characters, at least ' .
-            $this->userRule->getMinPasswordLength() . ' characters. ';
+        if (Util::isNotNull($password)) {
+            $user = new \Model\User('', $password);
+
+            if ($user->isBelowMinimumPasswordLength($password)) {
+                return 'Password has too few characters, at least ' .
+                    $user->getMinPasswordLength() . ' characters. ';
+            }
         }
         return '';
     }
