@@ -26,7 +26,7 @@ class LayoutView
 
         $this->registerView = new \View\RegisterView();
 
-        $this->session = new \Model\Session();
+        $this->session = new \Model\Auth();
     }
 
     public function render($message = '')

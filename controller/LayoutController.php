@@ -3,7 +3,7 @@
 namespace Controller;
 
 require_once 'model/Auth.php';
-require_once 'model/Session.php';
+require_once 'model/Auth.php';
 require_once 'model/UserStorage.php';
 require_once 'view/RegisterView.php';
 require_once 'model/Util.php';
@@ -21,9 +21,8 @@ class LayoutController
     {
         $this->view = $view;
         $this->message = '';
-        $this->auth = new \Model\Auth();
         $this->userStorage = new \Model\UserStorage();
-        $this->session = new \Model\Session();
+        $this->session = new \Model\Auth();
     }
 
     private function getMessage()
@@ -109,7 +108,7 @@ class LayoutController
     {
         $user = new \Model\User($this->view->getUsername(),
             $this->view->getPassword());
-        $validated = $this->auth->validateUser($user);
+        $validated = $this->session->authUser($user);
         $this->setValidationMessage($validated);
         return $validated;
     }
