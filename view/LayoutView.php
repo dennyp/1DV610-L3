@@ -2,34 +2,11 @@
 
 namespace View;
 
-require_once 'model/Cookie.php';
-require_once 'model/User.php';
-require_once 'model/DateTimeGenerator.php';
-
 class LayoutView
 {
-    private $loginView;
-    private $registerView;
-    private $date;
-    private $dateTimeView;
-    private $cookie;
-    private static $cookieName = 'PHPSESSID';
-    private $session;
     private static $registerName = 'register';
 
-    public function __construct(\View\LoginView $view)
-    {
-        $this->loginView = $view;
-
-        $this->dateTime = new \Model\DateTimeGenerator();
-        $this->dateTimeView = new DateTimeView($this->dateTime->getTime());
-
-        $this->registerView = new \View\RegisterView();
-
-        $this->session = new \Model\Auth();
-    }
-
-    public function render($message = '')
+    public function render($isUserLoggedIn, $loginView, $registerView, $dateTimeView, $message = '')
     {
         echo '<!DOCTYPE html>
       <html>
@@ -39,22 +16,22 @@ class LayoutView
         </head>
         <body>
           <h1>Assignment 2</h1>
-          ' . $this->isLoggedInHTML() . '
+          ' . $this->renderLoggedInHTML($isUserLoggedIn) . '
 
           <div class="container">
-              ' . $this->getHTMLBasedOnLoggedInOrRegister($message) . '
+              ' . $this->getHTMLBasedOnLoggedInOrRegister($loginView, $registerView, $message) . '
 
-              ' . $this->dateTimeView->show() . '
+              ' . $dateTimeView->show() . '
           </div>
          </body>
       </html>
     ';
     }
 
-    private function isLoggedInHTML()
+    private function renderLoggedInHTML($isUserLoggedIn)
     {
         $html = '';
-        if ($this->isLoggedIn()) {
+        if ($isUserLoggedIn) {
             $html = '<h2>Logged in</h2>';
         } else {
             $html = $this->renderLink();
@@ -63,30 +40,13 @@ class LayoutView
         return $html;
     }
 
-    private function getHTMLBasedOnLoggedInOrRegister($message)
+    private function getHTMLBasedOnLoggedInOrRegister($loginView, $registerView, $message)
     {
         if ($this->isRegistering()) {
-            return $this->registerView->render();
-        } else if ($this->isLoggedIn()) {
-            return $this->loginView->renderLoggedIn($message);
+            return $registerView->render();
         } else {
-            return $this->loginView->renderLogin($message);
+            return $loginView->render($message);
         }
-    }
-
-    private function isLoggedIn()
-    {
-        return $this->session->checkValidSession();
-    }
-
-    public function getLogout()
-    {
-        return $this->loginView->getLogout();
-    }
-
-    public function getPassword()
-    {
-        return $this->loginView->getPassword();
     }
 
     public function isRegistering(): bool
@@ -94,30 +54,6 @@ class LayoutView
         return isset($_GET[self::$registerName]);
     }
 
-    public function getUsername()
-    {
-        return $this->loginView->getUsername();
-    }
-
-    public function getUsernamePostback()
-    {
-        return $this->registerView->getRegisterUsername();
-    }
-
-    public function getPasswordPostBack()
-    {
-        return $this->registerView->getRegisterPassword();
-    }
-
-    public function isLoggingOut()
-    {
-        return $this->loginView->getLogout();
-    }
-
-    public function isRegisteringUser()
-    {
-        return $this->registerView->getRegisterPostback();
-    }
 
     private function renderLink()
     {
@@ -126,11 +62,5 @@ class LayoutView
         }
 
         return '<a href=?>Back to login</a>';
-    }
-
-    public function goToMainPage()
-    {
-        header('Location: ./');
-        exit;
     }
 }

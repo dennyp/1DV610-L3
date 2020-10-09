@@ -3,31 +3,40 @@
 require_once 'view/DateTimeView.php';
 require_once 'view/LayoutView.php';
 require_once 'view/LoginView.php';
+require_once 'view/RegisterView.php';
 require_once 'model/User.php';
-require_once 'controller/LayoutController.php';
-
-session_start();
+require_once 'model/DateTimeGenerator.php';
+require_once 'controller/LoginController.php';
 
 class App
 {
     private $loginView;
     private $layoutView;
-
-    private $user;
+    private $registerView;
+    private $dateTimeView;
 
     private $loginController;
-    private $layoutController;
 
     public function __construct()
     {
         $this->loginView = new \View\LoginView();
         $this->layoutView = new \View\LayoutView($this->loginView);
+        $this->registerView = new \View\RegisterView();
 
-        $this->layoutController = new \Controller\LayoutController($this->layoutView);
+        $this->dateTime = new \Model\DateTimeGenerator();
+        $this->dateTimeView = new \View\DateTimeView($this->dateTime->getTime());
+
+        $this->loginController = new \Controller\LoginController($this->loginView);
+    }
+
+    private function isUserLoggedIn()
+    {
+        return $this->loginView->isUserLoggedIn();
     }
 
     public function run()
     {
-        $this->layoutController->render();
+        session_start();
+        $this->layoutView->render($this->isUserLoggedIn(), $this->loginView, $this->registerView, $this->dateTimeView);
     }
 }
