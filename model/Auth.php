@@ -68,4 +68,8 @@ class Auth extends DatabaseHandler
         $dbUser = $userStorage->findOneUser($user->getUsername());
         return password_verify($user->getPassword(), $dbUser->getPassword());
     }
+
+    public function isUserLoggedIn() : bool {
+        return isset($_SESSION[self::$sessionName]);
+    }
 }
