@@ -2,6 +2,8 @@
 
 namespace View;
 
+require_once 'model/Auth.php';
+
 class LoginView
 {
     private static $login = 'LoginView::Login';
@@ -10,15 +12,87 @@ class LoginView
     private static $password = 'LoginView::Password';
     private static $keepLoggedIn = 'LoginView::KeepMeLoggedIn';
     private static $messageId = 'LoginView::Message';
+    private $message = '';
 
-    public function renderLogin($message)
+    public function render($message)
     {
-        return $this->generateLoginFormHTML($message);
+        if ($this->isUserLoggedIn()) {
+            return $this->generateLogoutButtonHTML($message);
+        } else {
+            return $this->generateLoginFormHTML($message);
+        }
     }
 
-    public function renderLoggedIn($message)
+    public function isUserLoggedIn(): bool
     {
-        return $this->generateLogoutButtonHTML($message);
+        $auth = new \Model\Auth();
+        return $auth->isUserLoggedIn();
+    }
+
+    private function checkInputFields()
+    {
+        if ($this->isUsernameNotNull() && $this->isUsernameEmpty()) {
+            $this->setMessage('Username is missing');
+        } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
+            $this->setMessage('Password is missing');
+        } else if ($this->isUsernameNotNull() && $this->isPasswordNotNull()) {
+            $validated = $this->validateUser();
+            $this->setSessionIfValidated($validated);
+        }
+    }
+
+    private function isUsernameNotNull(): bool
+    {
+        return !is_null($this->getUsername());
+    }
+
+    private function isUsernameEmpty(): bool
+    {
+        return empty($this->getUsername());
+    }
+
+    private function setMessage($message)
+    {
+        $this->message = $message;
+    }
+
+    private function isPasswordNotNull(): bool
+    {
+        return !is_null($this->view->getPassword());
+    }
+
+    private function isPasswordEmpty(): bool
+    {
+        return empty($this->view->getPassword());
+    }
+
+    private function validateUser(): bool
+    {
+        $user = new \Model\User(
+            $this->view->getUsername(),
+            $this->view->getPassword()
+        );
+        $validated = $this->session->authUser($user);
+        $this->setValidationMessage($validated);
+        return $validated;
+    }
+
+    private function setValidationMessage(bool $validated)
+    {
+        if (!$validated) {
+            $this->setMessage('Wrong name or password');
+        } else {
+            $this->setMessage('Welcome');
+        }
+    }
+
+    private function setSessionIfValidated(bool $validated)
+    {
+        if ($validated) {
+            $userStorage = new \Model\UserStorage();
+            $userId = $userStorage->findUserId($this->view->getUsername());
+            $this->session->setSession($userId);
+        }
     }
 
     private function generateLoginFormHTML(string $message): string
