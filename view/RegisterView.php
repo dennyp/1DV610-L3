@@ -26,7 +26,7 @@ class RegisterView
         $passwordRepeat = $this->getParameter(self::$passwordRepeat);
 
         try {
-            if ($this->getRegisterPostback()) {
+            if ($this->isRegisterPostback()) {
                 $this->userRuleException->checkUserRules($name, $password, $passwordRepeat);
             }
         } catch (\Exception $ex) {
@@ -64,23 +64,8 @@ class RegisterView
         return $_POST[$param] ?? '';
     }
 
-    public function getRegisterButtonName(): string
-    {
-        return self::$register;
-    }
-
-    public function getRegisterPostback(): bool
+    private function isRegisterPostback(): bool
     {
         return isset($_POST[self::$register]);
-    }
-
-    public function getRegisterUsername(): string
-    {
-        return $this->getParameter(self::$name);
-    }
-
-    public function getRegisterPassword(): string
-    {
-        return $this->getParameter(self::$password);
     }
 }
