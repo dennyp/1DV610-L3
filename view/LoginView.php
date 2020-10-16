@@ -57,9 +57,9 @@ class LoginView
     public function checkInputFields()
     {
         if ($this->isUsernameNotNull() && $this->isUsernameEmpty()) {
-            $this->setMessage('Username is missing');
+            $this->setUsernameMissingMessage();
         } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
-            $this->setMessage('Password is missing');
+            $this->setPasswordMissingMessage();
         } else if ($this->isUsernameNotNull() && $this->isPasswordNotNull()) {
             $authenticated = $this->authenticateUser();
             $this->setSessionIfAuthenticated($authenticated);
@@ -74,11 +74,6 @@ class LoginView
     private function isUsernameEmpty(): bool
     {
         return empty($this->getUsername());
-    }
-
-    private function setMessage($message)
-    {
-        $this->message = $message;
     }
 
     private function isPasswordNotNull(): bool
@@ -105,10 +100,30 @@ class LoginView
     private function setAuthenticationMessage(bool $authenticated)
     {
         if (!$authenticated) {
-            $this->setMessage('Wrong name or password');
+            $this->setWrongUsernameOrPasswordMessage();
         } else {
-            $this->setMessage('Welcome');
+            $this->setWelcomeMessage();
         }
+    }
+
+    private function setUsernameMissingMessage()
+    {
+        $this->message = 'Username is missing';
+    }
+
+    private function setPasswordMissingMessage()
+    {
+        $this->message = 'Password is missing';
+    }
+
+    private function setWrongUsernameOrPasswordMessage()
+    {
+        $this->message = 'Wrong name or password';
+    }
+
+    private function setWelcomeMessage()
+    {
+        $this->message = 'Welcome';
     }
 
     private function setSessionIfAuthenticated(bool $authenticated)
