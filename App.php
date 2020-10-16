@@ -33,6 +33,12 @@ class App
     {
         session_start();
 
+        if ($this->isUserLoggedIn()) {
+            // TODO: show app and welcome
+        } else {
+            $this->loginController->tryToLogin();
+        }
+
         if ($this->layoutView->isUserRegistering()) {
             $this->renderRegisterView();
         } else {

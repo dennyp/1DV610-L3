@@ -17,9 +17,9 @@ class LoginView
     public function render()
     {
         if ($this->isUserLoggedIn()) {
-            return $this->generateLogoutButtonHTML();
+            return $this->generateLogoutButtonHTML($this->message);
         } else {
-            return $this->generateLoginFormHTML();
+            return $this->generateLoginFormHTML($this->message);
         }
     }
 
@@ -61,8 +61,8 @@ class LoginView
         } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
             $this->setPasswordMissingMessage();
         } else if ($this->isUsernameNotNull() && $this->isPasswordNotNull()) {
-            $authenticated = $this->authenticateUser();
-            $this->setSessionIfAuthenticated($authenticated);
+            // $authenticated = $this->authenticateUser();
+            // $this->setSessionIfAuthenticated($authenticated);
         }
     }
 
@@ -78,12 +78,12 @@ class LoginView
 
     private function isPasswordNotNull(): bool
     {
-        return !is_null($this->view->getPassword());
+        return !is_null($this->getPassword());
     }
 
     private function isPasswordEmpty(): bool
     {
-        return empty($this->view->getPassword());
+        return empty($this->getPassword());
     }
 
     private function authenticateUser(): bool
@@ -103,6 +103,15 @@ class LoginView
             $this->setWrongUsernameOrPasswordMessage();
         } else {
             $this->setWelcomeMessage();
+        }
+    }
+
+    private function setSessionIfAuthenticated(bool $authenticated)
+    {
+        if ($authenticated) {
+            $userStorage = new \Model\UserStorage();
+            $userId = $userStorage->findUserId($this->view->getUsername());
+            $this->session->setSession($userId);
         }
     }
 
@@ -126,16 +135,12 @@ class LoginView
         $this->message = 'Welcome';
     }
 
-    private function setSessionIfAuthenticated(bool $authenticated)
+    public function setLogoutMessage()
     {
-        if ($authenticated) {
-            $userStorage = new \Model\UserStorage();
-            $userId = $userStorage->findUserId($this->view->getUsername());
-            $this->session->setSession($userId);
-        }
+        $this->message = 'Bye bye!';
     }
 
-    private function generateLoginFormHTML(string $message = ''): string
+    private function generateLoginFormHTML(string $message): string
     {
         return '
 			<form method="post">
@@ -158,7 +163,7 @@ class LoginView
 		';
     }
 
-    private function generateLogoutButtonHTML(string $message = ''): string
+    private function generateLogoutButtonHTML(string $message): string
     {
         return '
 			<form  method="post" >
