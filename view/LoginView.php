@@ -14,12 +14,12 @@ class LoginView
     private static $messageId = 'LoginView::Message';
     private $message = '';
 
-    public function render($message)
+    public function render()
     {
         if ($this->isUserLoggedIn()) {
-            return $this->generateLogoutButtonHTML($message);
+            return $this->generateLogoutButtonHTML();
         } else {
-            return $this->generateLoginFormHTML($message);
+            return $this->generateLoginFormHTML();
         }
     }
 
@@ -29,15 +29,40 @@ class LoginView
         return $auth->isUserLoggedIn();
     }
 
-    private function checkInputFields()
+    public function getUsername()
+    {
+        return $_POST[self::$name] ?? null;
+    }
+
+    public function getPassword()
+    {
+        return $_POST[self::$password] ?? null;
+    }
+
+    public function getRememberLogin()
+    {
+        return $_POST[self::$keepLoggedIn] ?? null;
+    }
+
+    public function isLoggingIn(): bool
+    {
+        return isset($_POST[self::$login]);
+    }
+
+    public function isLoggingOut()
+    {
+        return $_POST[self::$logout] ?? null;
+    }
+
+    public function checkInputFields()
     {
         if ($this->isUsernameNotNull() && $this->isUsernameEmpty()) {
             $this->setMessage('Username is missing');
         } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
             $this->setMessage('Password is missing');
         } else if ($this->isUsernameNotNull() && $this->isPasswordNotNull()) {
-            $validated = $this->validateUser();
-            $this->setSessionIfValidated($validated);
+            $authenticated = $this->authenticateUser();
+            $this->setSessionIfAuthenticated($authenticated);
         }
     }
 
@@ -66,36 +91,36 @@ class LoginView
         return empty($this->view->getPassword());
     }
 
-    private function validateUser(): bool
+    private function authenticateUser(): bool
     {
         $user = new \Model\User(
-            $this->view->getUsername(),
-            $this->view->getPassword()
+            $this->getUsername(),
+            $this->getPassword()
         );
-        $validated = $this->session->authUser($user);
-        $this->setValidationMessage($validated);
-        return $validated;
+        $authenticated = $this->session->authUser($user);
+        $this->setAuthenticationMessage($authenticated);
+        return $authenticated;
     }
 
-    private function setValidationMessage(bool $validated)
+    private function setAuthenticationMessage(bool $authenticated)
     {
-        if (!$validated) {
+        if (!$authenticated) {
             $this->setMessage('Wrong name or password');
         } else {
             $this->setMessage('Welcome');
         }
     }
 
-    private function setSessionIfValidated(bool $validated)
+    private function setSessionIfAuthenticated(bool $authenticated)
     {
-        if ($validated) {
+        if ($authenticated) {
             $userStorage = new \Model\UserStorage();
             $userId = $userStorage->findUserId($this->view->getUsername());
             $this->session->setSession($userId);
         }
     }
 
-    private function generateLoginFormHTML(string $message): string
+    private function generateLoginFormHTML(string $message = ''): string
     {
         return '
 			<form method="post">
@@ -118,7 +143,7 @@ class LoginView
 		';
     }
 
-    private function generateLogoutButtonHTML(string $message): string
+    private function generateLogoutButtonHTML(string $message = ''): string
     {
         return '
 			<form  method="post" >
@@ -126,25 +151,5 @@ class LoginView
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
 		';
-    }
-
-    public function getUsername()
-    {
-        return $_POST[self::$name] ?? null;
-    }
-
-    public function getPassword()
-    {
-        return $_POST[self::$password] ?? null;
-    }
-
-    public function getKeepMeLoggedIn()
-    {
-        return $_POST[self::$keepLoggedIn] ?? null;
-    }
-
-    public function getLogout()
-    {
-        return $_POST[self::$logout] ?? null;
     }
 }

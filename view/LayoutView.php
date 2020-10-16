@@ -6,7 +6,7 @@ class LayoutView
 {
     private static $registerName = 'register';
 
-    public function render($isUserLoggedIn, $loginView, $registerView, $dateTimeView, $message = '')
+    public function render($isUserLoggedIn, $view, DateTimeView $dateTimeView)
     {
         echo '<!DOCTYPE html>
       <html>
@@ -19,7 +19,7 @@ class LayoutView
           ' . $this->renderLoggedInHTML($isUserLoggedIn) . '
 
           <div class="container">
-              ' . $this->getHTMLBasedOnLoggedInOrRegister($loginView, $registerView, $message) . '
+              ' . $view->render() . '
 
               ' . $dateTimeView->show() . '
           </div>
@@ -28,7 +28,7 @@ class LayoutView
     ';
     }
 
-    private function renderLoggedInHTML($isUserLoggedIn)
+    private function renderLoggedInHTML($isUserLoggedIn): string
     {
         $html = '';
         if ($isUserLoggedIn) {
@@ -40,27 +40,17 @@ class LayoutView
         return $html;
     }
 
-    private function getHTMLBasedOnLoggedInOrRegister($loginView, $registerView, $message)
+    private function renderLink(): string
     {
-        if ($this->isRegistering()) {
-            return $registerView->render();
-        } else {
-            return $loginView->render($message);
-        }
-    }
-
-    public function isRegistering(): bool
-    {
-        return isset($_GET[self::$registerName]);
-    }
-
-
-    private function renderLink()
-    {
-        if (!isset($_GET[self::$registerName])) {
+        if (!$this->isUserRegistering()) {
             return '<a href="./index.php?' . self::$registerName . '">Register a new user</a>';
         }
 
         return '<a href=?>Back to login</a>';
+    }
+
+    public function isUserRegistering(): bool
+    {
+        return isset($_GET[self::$registerName]);
     }
 }

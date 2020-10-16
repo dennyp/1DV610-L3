@@ -29,14 +29,29 @@ class App
         $this->loginController = new \Controller\LoginController($this->loginView);
     }
 
+    public function run()
+    {
+        session_start();
+
+        if ($this->layoutView->isUserRegistering()) {
+            $this->renderRegisterView();
+        } else {
+            $this->renderLoginView();
+        }
+    }
+
     private function isUserLoggedIn()
     {
         return $this->loginView->isUserLoggedIn();
     }
 
-    public function run()
+    private function renderRegisterView()
     {
-        session_start();
-        $this->layoutView->render($this->isUserLoggedIn(), $this->loginView, $this->registerView, $this->dateTimeView);
+        $this->layoutView->render($this->isUserLoggedIn(), $this->registerView, $this->dateTimeView);
+    }
+
+    private function renderLoginView()
+    {
+        $this->layoutView->render($this->isUserLoggedIn(), $this->loginView, $this->dateTimeView);
     }
 }
