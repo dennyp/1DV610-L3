@@ -23,11 +23,10 @@ class Auth extends DatabaseHandler
     {
         $userId = $this->userStorage->findUserId($credentials->getUsername());
 
-        if (!$userId) {
+        if (!$userId || !$this->verifyUserPassword($credentials)) {
             throw new WrongUsernameOrPasswordException();
         }
 
-        $this->user = $this->userStorage->findOneUser($credentials->getUsername());
         $this->setSessionInClient();
         $this->setSessionInDb($userId);
     }
@@ -84,11 +83,10 @@ class Auth extends DatabaseHandler
         }
     }
 
-    public function authUser(\Model\User $user): bool
+    private function verifyUserPassword(LoginCredentials $credentials): bool
     {
-        $userStorage = new \Model\UserStorage();
-        $dbUser = $userStorage->findOneUser($user->getUsername());
-        return password_verify($user->getPassword(), $dbUser->getPassword());
+        $this->user = $this->userStorage->findOneUser($credentials->getUsername());
+        return password_verify($credentials->getPassword(), $this->user->getPassword());
     }
 
     public function isUserLoggedIn(): bool
