@@ -23,13 +23,24 @@ class Auth extends DatabaseHandler
     {
         $userId = $this->userStorage->findUserId($credentials->getUsername());
 
-        if (!$userId) {
+        if (!$userId || !$this->verifyUserPassword($credentials)) {
             throw new WrongUsernameOrPasswordException();
         }
 
-        $this->user = $this->userStorage->findOneUser($credentials->getUsername());
         $this->setSessionInClient();
         $this->setSessionInDb($userId);
+    }
+
+    private function verifyUserPassword(LoginCredentials $credentials): bool
+    {
+        $this->user = $this->userStorage->findOneUser($credentials->getUsername());
+        return password_verify($credentials->getPassword(), $this->user->getPassword());
+    }
+
+    private function setSessionInClient()
+    {
+        session_regenerate_id();
+        $_SESSION[self::$sessionName] = $this->user->getUsername();
     }
 
     public function setSessionInDb(string $userId)
@@ -44,12 +55,6 @@ class Auth extends DatabaseHandler
             }
             $this->getConnection()->close();
         }
-    }
-
-    private function setSessionInClient()
-    {
-        session_regenerate_id();
-        $_SESSION[self::$sessionName] = $this->user->getUsername();
     }
 
     public function checkValidSession(): bool
@@ -82,13 +87,6 @@ class Auth extends DatabaseHandler
             }
             $this->getConnection()->close();
         }
-    }
-
-    public function authUser(\Model\User $user): bool
-    {
-        $userStorage = new \Model\UserStorage();
-        $dbUser = $userStorage->findOneUser($user->getUsername());
-        return password_verify($user->getPassword(), $dbUser->getPassword());
     }
 
     public function isUserLoggedIn(): bool
