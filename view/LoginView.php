@@ -6,6 +6,7 @@ use Model\LoginCredentials;
 
 require_once 'model/Auth.php';
 require_once 'model/LoginCredentials.php';
+require_once 'exceptions/LoginCredentialsException.php';
 
 class LoginView
 {
@@ -60,13 +61,19 @@ class LoginView
     public function getLoginCredentials(): \Model\LoginCredentials
     {
         if ($this->isLoggingIn()) {
-            if ($this->isUsernameNotNull() && $this->isUsernameEmpty()) {
-                $this->setUsernameMissingMessage();
-            } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
-                $this->setPasswordMissingMessage();
-            } else {
-                return new LoginCredentials($this->getUsername(), $this->getPassword());
-            }
+            $this->isValidFields();
+            return new LoginCredentials($this->getUsername(), $this->getPassword());
+        }
+
+        return new LoginCredentials($this->getUsername(), $this->getPassword());
+    }
+
+    private function isValidFields()
+    {
+        if ($this->isUsernameNotNull() && $this->isUsernameEmpty()) {
+            throw new MissingUsernameException();
+        } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
+            throw new MissingPasswordException();
         }
     }
 
@@ -119,12 +126,12 @@ class LoginView
         }
     }
 
-    private function setUsernameMissingMessage()
+    public function setUsernameMissingMessage()
     {
         $this->message = 'Username is missing';
     }
 
-    private function setPasswordMissingMessage()
+    public function setPasswordMissingMessage()
     {
         $this->message = 'Password is missing';
     }

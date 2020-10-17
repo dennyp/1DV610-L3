@@ -8,21 +8,26 @@ require_once 'model/Util.php';
 class LoginController
 {
     private $view;
-    private $session;
+    private $auth;
 
     public function __construct(\View\LoginView $loginView)
     {
         $this->view = $loginView;
         $this->session = new \Model\Auth();
-        $this->userStorage = new \Model\UserStorage();
     }
 
     public function tryToLogin()
     {
-        if ($this->view->isLoggingIn()) {
-            $this->view->getLoginCredentials();
-        } else if ($this->view->isLoggingOut()) {
-            $this->logout();
+        try {
+            if ($this->view->isLoggingIn()) {
+                $loginCredentials = $this->view->getLoginCredentials();
+            } else if ($this->view->isLoggingOut()) {
+                $this->logout();
+            }
+        } catch (\View\MissingUsernameException $error) {
+            $this->view->setUsernameMissingMessage();
+        } catch (\View\MissingPasswordException $error) {
+            $this->view->setPasswordMissingMessage();
         }
     }
 
