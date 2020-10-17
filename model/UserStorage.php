@@ -52,7 +52,7 @@ class UserStorage extends DatabaseHandler
             $statement->close();
         }
         $this->getConnection()->close();
-        return $userId;
+        return $userId ?? '';
     }
 
     public function findOneUser(string $username): \Model\User

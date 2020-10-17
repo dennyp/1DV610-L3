@@ -4,6 +4,7 @@ namespace Controller;
 
 require_once 'model/Auth.php';
 require_once 'model/Util.php';
+require_once 'model/exceptions/LoginException.php';
 
 class LoginController
 {
@@ -13,7 +14,7 @@ class LoginController
     public function __construct(\View\LoginView $loginView)
     {
         $this->view = $loginView;
-        $this->session = new \Model\Auth();
+        $this->auth = new \Model\Auth();
     }
 
     public function tryToLogin()
@@ -21,6 +22,8 @@ class LoginController
         try {
             if ($this->view->isLoggingIn()) {
                 $loginCredentials = $this->view->getLoginCredentials();
+                $this->auth->loginWithCredentials($loginCredentials);
+                $this->view->setWelcomeMessage();
             } else if ($this->view->isLoggingOut()) {
                 $this->logout();
             }
@@ -28,6 +31,8 @@ class LoginController
             $this->view->setUsernameMissingMessage();
         } catch (\View\MissingPasswordException $error) {
             $this->view->setPasswordMissingMessage();
+        } catch (\Model\WrongUsernameOrPasswordException $error) {
+            $this->view->setWrongUsernameOrPasswordMessage();
         }
     }
 
@@ -39,6 +44,6 @@ class LoginController
     private function logout()
     {
         $this->view->setLogoutMessage();
-        $this->session->removeSession();
+        $this->auth->removeSession();
     }
 }

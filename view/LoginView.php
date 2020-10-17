@@ -63,9 +63,9 @@ class LoginView
         if ($this->isLoggingIn()) {
             $this->isValidFields();
             return new LoginCredentials($this->getUsername(), $this->getPassword());
+        } else {
+            // TODO: Get values from cookie
         }
-
-        return new LoginCredentials($this->getUsername(), $this->getPassword());
     }
 
     private function isValidFields()
@@ -136,12 +136,12 @@ class LoginView
         $this->message = 'Password is missing';
     }
 
-    private function setWrongUsernameOrPasswordMessage()
+    public function setWrongUsernameOrPasswordMessage()
     {
         $this->message = 'Wrong name or password';
     }
 
-    private function setWelcomeMessage()
+    public function setWelcomeMessage()
     {
         $this->message = 'Welcome';
     }

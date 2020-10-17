@@ -9,14 +9,30 @@ class Auth extends DatabaseHandler
 {
     private $sessionId;
     private static $sessionName = 'SessionId';
+    private $userStorage;
+    private $user;
 
     public function __construct()
     {
         parent::__construct();
         $this->sessionId = session_id();
+        $this->userStorage = new UserStorage();
     }
 
-    public function setSession(string $userId)
+    public function loginWithCredentials(LoginCredentials $credentials)
+    {
+        $userId = $this->userStorage->findUserId($credentials->getUsername());
+
+        if (!$userId) {
+            throw new WrongUsernameOrPasswordException();
+        }
+
+        $this->user = $this->userStorage->findOneUser($credentials->getUsername());
+        $this->setSessionInClient();
+        $this->setSessionInDb($userId);
+    }
+
+    public function setSessionInDb(string $userId)
     {
         if (session_status() == PHP_SESSION_ACTIVE) {
             $query = "REPLACE INTO session (SessionId, UserId) Values (?,?)";
@@ -28,6 +44,12 @@ class Auth extends DatabaseHandler
             }
             $this->getConnection()->close();
         }
+    }
+
+    private function setSessionInClient()
+    {
+        session_regenerate_id();
+        $_SESSION[self::$sessionName] = $this->user->getUsername();
     }
 
     public function checkValidSession(): bool
@@ -69,7 +91,8 @@ class Auth extends DatabaseHandler
         return password_verify($user->getPassword(), $dbUser->getPassword());
     }
 
-    public function isUserLoggedIn() : bool {
+    public function isUserLoggedIn(): bool
+    {
         return isset($_SESSION[self::$sessionName]);
     }
 }
