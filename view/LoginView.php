@@ -2,7 +2,10 @@
 
 namespace View;
 
+use Model\LoginCredentials;
+
 require_once 'model/Auth.php';
+require_once 'model/LoginCredentials.php';
 
 class LoginView
 {
@@ -54,15 +57,16 @@ class LoginView
         return $_POST[self::$logout] ?? null;
     }
 
-    public function checkInputFields()
+    public function getLoginCredentials(): \Model\LoginCredentials
     {
-        if ($this->isUsernameNotNull() && $this->isUsernameEmpty()) {
-            $this->setUsernameMissingMessage();
-        } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
-            $this->setPasswordMissingMessage();
-        } else if ($this->isUsernameNotNull() && $this->isPasswordNotNull()) {
-            // $authenticated = $this->authenticateUser();
-            // $this->setSessionIfAuthenticated($authenticated);
+        if ($this->isLoggingIn()) {
+            if ($this->isUsernameNotNull() && $this->isUsernameEmpty()) {
+                $this->setUsernameMissingMessage();
+            } else if ($this->isPasswordNotNull() && $this->isPasswordEmpty()) {
+                $this->setPasswordMissingMessage();
+            } else {
+                return new LoginCredentials($this->getUsername(), $this->getPassword());
+            }
         }
     }
 

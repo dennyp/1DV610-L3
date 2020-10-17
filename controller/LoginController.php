@@ -20,7 +20,7 @@ class LoginController
     public function tryToLogin()
     {
         if ($this->view->isLoggingIn()) {
-            $this->view->checkInputFields();
+            $this->view->getLoginCredentials();
         } else if ($this->view->isLoggingOut()) {
             $this->logout();
         }
