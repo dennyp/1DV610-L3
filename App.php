@@ -33,8 +33,8 @@ class App
     {
         session_start();
 
-        if ($this->isUserLoggedIn()) {
-            // TODO: show app and welcome
+        if ($this->isUserLoggingOut()) {
+            $this->loginController->logout();
         } else {
             $this->loginController->tryToLogin();
         }
@@ -49,6 +49,11 @@ class App
     private function isUserLoggedIn()
     {
         return $this->loginView->isUserLoggedIn();
+    }
+
+    private function isUserLoggingOut()
+    {
+        return $this->loginView->isLoggingOut();
     }
 
     private function renderRegisterView()

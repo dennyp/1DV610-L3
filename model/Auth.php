@@ -76,7 +76,7 @@ class Auth extends DatabaseHandler
         return false;
     }
 
-    public function removeSession()
+    public function removeSessionInDb()
     {
         if (session_status() == PHP_SESSION_ACTIVE) {
             $query = "DELETE FROM session WHERE SessionId=?";
@@ -92,5 +92,10 @@ class Auth extends DatabaseHandler
     public function isUserLoggedIn(): bool
     {
         return isset($_SESSION[self::$sessionName]);
+    }
+
+    public function logout()
+    {
+        unset($_SESSION[self::$sessionName]);
     }
 }

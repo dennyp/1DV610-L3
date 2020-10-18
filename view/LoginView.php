@@ -53,9 +53,9 @@ class LoginView
         return isset($_POST[self::$login]);
     }
 
-    public function isLoggingOut()
+    public function isLoggingOut(): bool
     {
-        return $_POST[self::$logout] ?? null;
+        return isset($_POST[self::$logout]);
     }
 
     public function getLoginCredentials(): \Model\LoginCredentials
@@ -95,35 +95,6 @@ class LoginView
     private function isPasswordEmpty(): bool
     {
         return empty($this->getPassword());
-    }
-
-    private function authenticateUser(): bool
-    {
-        $user = new \Model\User(
-            $this->getUsername(),
-            $this->getPassword()
-        );
-        $authenticated = $this->session->authUser($user);
-        $this->setAuthenticationMessage($authenticated);
-        return $authenticated;
-    }
-
-    private function setAuthenticationMessage(bool $authenticated)
-    {
-        if (!$authenticated) {
-            $this->setWrongUsernameOrPasswordMessage();
-        } else {
-            $this->setWelcomeMessage();
-        }
-    }
-
-    private function setSessionIfAuthenticated(bool $authenticated)
-    {
-        if ($authenticated) {
-            $userStorage = new \Model\UserStorage();
-            $userId = $userStorage->findUserId($this->view->getUsername());
-            $this->session->setSession($userId);
-        }
     }
 
     public function setUsernameMissingMessage()

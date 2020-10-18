@@ -24,8 +24,6 @@ class LoginController
                 $loginCredentials = $this->view->getLoginCredentials();
                 $this->auth->loginWithCredentials($loginCredentials);
                 $this->view->setWelcomeMessage();
-            } else if ($this->view->isLoggingOut()) {
-                $this->logout();
             }
         } catch (\View\MissingUsernameException $error) {
             $this->view->setUsernameMissingMessage();
@@ -41,9 +39,10 @@ class LoginController
         return !$this->session->checkValidSession();
     }
 
-    private function logout()
+    public function logout()
     {
         $this->view->setLogoutMessage();
-        $this->auth->removeSession();
+        $this->auth->removeSessionInDb();
+        $this->auth->logout();
     }
 }
