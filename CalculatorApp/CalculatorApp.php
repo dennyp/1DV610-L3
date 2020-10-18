@@ -16,6 +16,11 @@ class CalculatorApp
 
   public function run()
   {
-    echo 'test';
+    // $this->calculatorView->generateCalculatorHTML();
+  }
+
+  public function getCalculatorView()
+  {
+    return $this->calculatorView;
   }
 }

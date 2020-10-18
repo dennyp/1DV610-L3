@@ -29,7 +29,7 @@ class LoginApp
         $this->loginController = new \Controller\LoginController($this->loginView);
     }
 
-    public function run()
+    public function run(\View\CalculatorView $calculatorView)
     {
         if ($this->isUserLoggingOut()) {
             $this->loginController->logout();
@@ -38,9 +38,9 @@ class LoginApp
         }
 
         if ($this->layoutView->isUserRegistering()) {
-            $this->renderRegisterView();
+            $this->renderRegisterView($calculatorView);
         } else {
-            $this->renderLoginView();
+            $this->renderLoginView($calculatorView);
         }
     }
 
@@ -54,13 +54,13 @@ class LoginApp
         return $this->loginView->isLoggingOut();
     }
 
-    private function renderRegisterView()
+    private function renderRegisterView(\View\CalculatorView $calculatorView)
     {
-        $this->layoutView->render($this->isUserLoggedIn(), $this->registerView, $this->dateTimeView);
+        $this->layoutView->render($this->isUserLoggedIn(), $this->registerView, $this->dateTimeView, $calculatorView);
     }
 
-    private function renderLoginView()
+    private function renderLoginView(\View\CalculatorView $calculatorView)
     {
-        $this->layoutView->render($this->isUserLoggedIn(), $this->loginView, $this->dateTimeView);
+        $this->layoutView->render($this->isUserLoggedIn(), $this->loginView, $this->dateTimeView, $calculatorView);
     }
 }

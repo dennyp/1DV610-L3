@@ -12,13 +12,14 @@ class App
   {
     $this->loginApp = new LoginApp();
     $this->calculatorApp = new CalculatorApp();
+    $this->calculatorView = $this->calculatorApp->getCalculatorView();
   }
 
   public function run()
   {
     session_start();
 
-    $this->loginApp->run();
+    $this->loginApp->run($this->calculatorView);
 
     if ($this->loginApp->isUserLoggedIn()) {
       $this->calculatorApp->run();

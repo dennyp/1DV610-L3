@@ -7,7 +7,7 @@ class LayoutView
     private static $registerName = 'register';
     private $bootstrapCDN = '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">';
 
-    public function render($isUserLoggedIn, $view, DateTimeView $dateTimeView)
+    public function render($isUserLoggedIn, $view, DateTimeView $dateTimeView, \View\CalculatorView $calculatorView)
     {
         echo '<!DOCTYPE html>
       <html>
@@ -22,7 +22,7 @@ class LayoutView
                 ' . $this->renderLoggedInHTML($isUserLoggedIn) . '
 
                     ' . $view->render() . '
-
+                    ' . $calculatorView->generateCalculatorHTML($isUserLoggedIn) . '
                     ' . $dateTimeView->show() . '
             </div>
          </body>
