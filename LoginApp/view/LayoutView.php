@@ -5,6 +5,7 @@ namespace View;
 class LayoutView
 {
     private static $registerName = 'register';
+    private $bootstrapCDN = '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">';
 
     public function render($isUserLoggedIn, $view, DateTimeView $dateTimeView)
     {
@@ -12,17 +13,18 @@ class LayoutView
       <html>
         <head>
           <meta charset="utf-8">
+          ' . $this->bootstrapCDN . '
           <title>Login Example</title>
         </head>
         <body>
-          <h1>Assignment 2</h1>
-          ' . $this->renderLoggedInHTML($isUserLoggedIn) . '
+            <div class="container">
+                <h1>Assignment 2</h1>
+                ' . $this->renderLoggedInHTML($isUserLoggedIn) . '
 
-          <div class="container">
-              ' . $view->render() . '
+                    ' . $view->render() . '
 
-              ' . $dateTimeView->show() . '
-          </div>
+                    ' . $dateTimeView->show() . '
+            </div>
          </body>
       </html>
     ';
