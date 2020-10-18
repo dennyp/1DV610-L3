@@ -41,8 +41,10 @@ class LoginController
 
     public function logout()
     {
-        $this->view->setLogoutMessage();
-        $this->auth->removeSessionInDb();
-        $this->auth->logout();
+        if ($this->auth->isUserLoggedIn() && $this->view->isLoggingOut()) {
+            $this->view->setLogoutMessage();
+            $this->auth->removeSessionInDb();
+            $this->auth->logout();
+        }
     }
 }
