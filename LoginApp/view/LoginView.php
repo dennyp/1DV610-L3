@@ -2,11 +2,9 @@
 
 namespace View;
 
-use Model\LoginCredentials;
-
-require_once 'model/Auth.php';
-require_once 'model/LoginCredentials.php';
-require_once 'exceptions/LoginCredentialsException.php';
+require_once 'LoginApp/model/Auth.php';
+require_once 'LoginApp/model/LoginCredentials.php';
+require_once 'LoginApp/view/exceptions/LoginCredentialsException.php';
 
 class LoginView
 {
@@ -62,7 +60,7 @@ class LoginView
     {
         if ($this->isLoggingIn()) {
             $this->isValidFields();
-            return new LoginCredentials($this->getUsername(), $this->getPassword());
+            return new \Model\LoginCredentials($this->getUsername(), $this->getPassword());
         } else {
             // TODO: Get values from cookie
         }

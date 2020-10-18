@@ -2,7 +2,7 @@
 
 namespace View;
 
-require_once 'model/UserRuleException.php';
+require_once 'LoginApp/model/UserRuleException.php';
 
 class RegisterView
 {

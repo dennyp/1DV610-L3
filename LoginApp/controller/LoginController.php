@@ -2,9 +2,9 @@
 
 namespace Controller;
 
-require_once 'model/Auth.php';
-require_once 'model/Util.php';
-require_once 'model/exceptions/LoginException.php';
+require_once 'LoginApp/model/Auth.php';
+require_once 'LoginApp/model/Util.php';
+require_once 'LoginApp/model/exceptions/LoginException.php';
 
 class LoginController
 {
