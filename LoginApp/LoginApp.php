@@ -44,7 +44,7 @@ class LoginApp
         }
     }
 
-    private function isUserLoggedIn()
+    public function isUserLoggedIn()
     {
         return $this->loginView->isUserLoggedIn();
     }
