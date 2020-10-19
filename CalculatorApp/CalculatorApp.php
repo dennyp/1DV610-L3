@@ -16,7 +16,10 @@ class CalculatorApp
 
   public function run()
   {
-    // $this->calculatorView->generateCalculatorHTML();
+    if ($this->calculatorView->isNumber()) {
+      $this->calculatorView->setDisplayResult($this->calculatorView->getNumberValue());
+      $this->calculatorView->generateCalculatorHTML(TRUE);
+    }
   }
 
   public function getCalculatorView()
